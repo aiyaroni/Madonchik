@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Madonchik — חידון פיזיקה</title>
+  <!--
+    ===== פריסה ונתונים דינמיים =====
+    1) שים קובץ JSON ב- /data/physics-questions.json עם פורמט:
+       [
+         {
+           "q": "למה רואים ברק לפני רעם?",
+           "choices": ["קול מהיר יותר","אור מהיר יותר","זה קורה יחד","תלוי בעננים"],
+           "correct": 1,
+           "hint": "האור מהיר מהקול.",
+           "steps": [
+             "צעד 1: מה נע מהר יותר – אור או קול?",
+             "צעד 2: אם האור מהיר יותר, מה תראה קודם?",
+             "צעד 3: לכן רואים את הברק לפני ששומעים את הרעם."
+           ],
+           "topic": "waves",
+           "level": "easy"
+         }
+       ]
+    2) רענון/טעינה: הכפתור "רענן מאגר" קורא fetch('/data/physics-questions.json', {cache:'no-store'})
+       אם נכשל → ייטען מה- localStorage; ואם גם זה לא קיים → ייטען הבנק המקומי המובנה בקוד.
+    3) Vercel (אופציונלי): vercel.json עם:
+       {
+         "headers":[{"source":"/data/(.*)\\.json","headers":[{"key":"Cache-Control","value":"no-store"}]}]
+       }
+  -->
+  <style>
+    :root{
+      --ink:#1f2430; --ink-soft:#4b5263; --bg:#f6f7fb; --card:#ffffff;
+      --accent:#4f7cff; --accent-2:#00b894; --wrong:#ff7675; --muted:#e6e9f2;
+      --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.06);
+    }
+    html.dark{
+      --ink:#e6e9f2; --ink-soft:#b6bed1; --bg:#0f1116; --card:#161a24;
+      --accent:#7aa2ff; --accent-2:#2bd4a7; --wrong:#ff7b88; --muted:#22283a;
+      --shadow:0 6px 24px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; background:var(--bg); color:var(--ink);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Heebo,Arimo,Arial,sans-serif; line-height:1.6 }
+    .wrap{ max-width:980px; margin:24px auto 40px; padding:0 16px }
+    header.top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; }
+    .logo{ width:40px; height:40px; border-radius:10px; display:grid; place-items:center;
+      background:linear-gradient(135deg, var(--accent), #9ab7ff); color:#fff; font-weight:900; box-shadow:var(--shadow) }
+    .brand h1{ margin:0; font-size:clamp(20px,2.2vw,26px) }
+    .toolbar{ display:flex; gap:8px; flex-wrap:wrap }
+    .chip{
+      border:1px solid var(--muted); background:var(--card); color:var(--ink);
+      border-radius:999px; padding:8px 12px; cursor:pointer; font-weight:700; font-size:14px;
+      box-shadow:var(--shadow)
+    }
+    .chip[aria-pressed="true"]{ box-shadow:0 0 0 3px rgba(79,124,255,.25), var(--shadow) }
+    .card{
+      background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px;
+    }
+    .meta{ display:flex; justify-content:space-between; align-items:center; gap:8px; color:var(--ink-soft); font-size:14px; margin-bottom:10px }
+    .score{ display:inline-flex; align-items:center; gap:8px; background:rgba(0,0,0,.02);
+      border:1px solid var(--muted); padding:6px 10px; border-radius:10px }
+    .progress{ height:10px; background:var(--muted); border-radius:999px; overflow:hidden; margin:8px 0 16px }
+    .bar{ height:100%; width:0%; background:linear-gradient(90deg,var(--accent),#6a9bff); transition:width .35s ease }
+    .q{ font-size:clamp(18px,2vw,22px); margin:6px 0 14px; font-weight:800 }
+    .choices{ display:grid; grid-template-columns:1fr; gap:10px }
+    @media (min-width:640px){ .choices{ grid-template-columns:1fr 1fr } }
+    .btn{
+      border:1px solid var(--muted); background:var(--card); border-radius:12px; padding:12px 14px; text-align:right;
+      cursor:pointer; font-size:16px; transition:transform .02s ease, border-color .2s ease, box-shadow .2s ease; color:var(--ink)
+    }
+    .btn:hover{ box-shadow:0 2px 10px rgba(0,0,0,.05) }
+    .btn:active{ transform:scale(.995) }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed }
+    .btn.correct{ border-color:var(--accent-2); box-shadow:0 0 0 3px color-mix(in oklab, var(--accent-2) 25%, transparent) }
+    .btn.wrong{ border-color:var(--wrong); box-shadow:0 0 0 3px color-mix(in oklab, var(--wrong) 25%, transparent) }
+    .hint{
+      background:color-mix(in oklab, var(--accent) 12%, transparent);
+      border:1px dashed color-mix(in oklab, var(--accent) 35%, var(--muted));
+      color:color-mix(in oklab, var(--ink) 85%, var(--ink-soft));
+      padding:10px 12px; border-radius:12px; margin:10px 0 0; display:none; font-size:14px;
+    }
+    .controls{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap }
+    .primary,.ghost{
+      border:0; border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer; font-size:15px
+    }
+    .primary{ background:var(--accent); color:#fff }
+    .primary:disabled{ opacity:.6; cursor:not-allowed }
+    .ghost{ background:rgba(0,0,0,.06); color:var(--ink) }
+    .summary{ text-align:center; padding:24px 8px; }
+    .summary h2{ margin:0 0 8px }
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px;
+      background:color-mix(in oklab, var(--accent-2) 12%, transparent); color:color-mix(in oklab, var(--ink) 90%, var(--ink-soft));
+      font-weight:800; margin:6px 0 14px }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center }
+    .muted-note{ font-size:12px; color:var(--ink-soft) }
+    .kbd{ font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size:12px; padding:2px 6px; border-radius:8px; background:var(--muted); border:1px solid color-mix(in oklab, var(--ink) 10%, var(--muted)) }
+    .foot{ text-align:center; margin-top:16px; color:var(--ink-soft); font-size:13px }
+    [dir="rtl"] .choices .btn{ text-align:right }
+    .ltr{ direction:ltr; unicode-bidi:embed; display:inline-block }
+    @media (prefers-reduced-motion: reduce){ .bar{ transition:none } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top" aria-label="סרגל עליון">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">Md</div>
+        <h1 title="Madonchik">Madonchik — חידון פיזיקה</h1>
+      </div>
+      <div class="toolbar">
+        <button id="audioToggle" class="chip" type="button" aria-pressed="false" title="מצב צליל">🔊 צליל</button>
+        <button id="themeToggle" class="chip" type="button" aria-pressed="false" title="מצב כהה/בהיר">🌗 מצב כהה</button>
+        <button id="refreshBankBtn" class="chip" type="button" title="טען/רענן מאגר שאלות">♻️ רענן מאגר</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="meta">
+        <div class="score" id="scoreBox">ניקוד: <strong id="score">0</strong> / <span id="total">10</span></div>
+        <div id="counter" aria-live="polite">שאלה <b class="ltr">1</b> מתוך <b class="ltr">10</b></div>
+      </div>
+
+      <div class="progress" aria-label="התקדמות חידון">
+        <div class="bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
+
+      <div id="quizArea">
+        <div class="q" id="question">טוען סט חדש…</div>
+        <div class="choices" id="choices" role="listbox" aria-label="בחירת תשובה"></div>
+        <div class="hint" id="hintBox" role="note"></div>
+
+        <div class="controls">
+          <button class="ghost" id="hintBtn" type="button" disabled>הצג רמז</button>
+          <button class="primary" id="nextBtn" type="button" disabled>שאלה הבאה</button>
+          <button class="ghost" id="newSetBtn" type="button" title="סט חדש מתוך המאגר הטעון">סט חדש</button>
+        </div>
+        <div class="muted-note">טיפ: אפשר לענות גם עם המקלדת (<span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span>/<span class="kbd">4</span>, ו־<span class="kbd">N</span> לשאלה הבאה).</div>
+      </div>
+
+      <div id="summary" class="summary" style="display:none">
+        <h2>כל הכבוד! 🏆</h2>
+        <div class="pill"><span id="finalScore">0</span> / <span id="finalTotal">0</span></div>
+        <p id="resultText"></p>
+        <div class="row" style="margin-top:10px">
+          <button class="primary" id="restartBtn" type="button">שחקו שוב (סט חדש)</button>
+          <button class="ghost" id="nextQuizBtn" type="button" title="טען מחדש מהמאגר">עוד חידון</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">© 2025 Madonchik — חידון פיזיקה ידידותי. שאלות נטענות דינמית; יש נפילה חכמה אם אין רשת.</div>
+  </div>
+
+  <script>
+    /* ===== קבועים ואחסון ===== */
+    const BANK_URL = '/data/physics-questions.json';
+    const TOTAL_QUESTIONS = 10;
+
+    const LS_BANK = 'madonchik_bank_cache_v1';
+    const LS_BANK_TS = 'madonchik_bank_cache_ts_v1';
+    const LS_SOUND = 'madonchik_sound_muted';
+    const LS_THEME = 'madonchik_theme'; // 'dark' | 'light'
+
+    let bankLoaded = [];  // מאגר הנוכחי שממנו נבנה כל סט
+    let quizData = [];    // סט שאלות לסשן
+    let idx = 0, score = 0, locked = false, hintStep = -1;
+
+    /* ===== עזרי אקראיות ===== */
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
+    function pickRandomQuestions(bank, n){
+      const copy=[...bank]; shuffle(copy);
+      return copy.slice(0, Math.min(n, copy.length)).map(q=>{
+        const mix = q.choices.map((txt,i)=>({txt,i})); shuffle(mix);
+        return {
+          q: q.q, choices: mix.map(c=>c.txt),
+          correct: mix.findIndex(c=>c.i===q.correct),
+          hint: q.hint || '', steps: Array.isArray(q.steps)? q.steps.slice() : [],
+          topic: q.topic || null, level: q.level || null
+        };
+      });
+    }
+
+    /* ===== מאגר מקומי (fallback) ===== */
+    const localBigBank = [
+      { q:"מה מושך חפצים לקרקע?", choices:["חיכוך","גרביטציה","מגנטיות","רוח"], correct:1, hint:"הכוח שמושך הכול למטה" },
+      { q:"איזו אנרגיה יש לתנועה?", choices:["קינטית","חשמלית","תרמית","אלסטית"], correct:0, hint:"קינטית = תנועה" },
+      { q:"למה רואים ברק לפני ששומעים רעם?", choices:["קול מהיר יותר","אור מהיר יותר","זה קורה יחד","תלוי בעננים"], correct:1, hint:"האור מהיר מהקול",
+        steps:["האור נע מהר יותר מהקול.","ברק זה אור, רעם זה קול.","לכן רואים קודם את הברק."] },
+      { q:"מדוע ספינה צפה?", choices:["משקל קטן","צפיפות נמוכה ממים","מנוע חזק","מגנטים"], correct:1, hint:"צפיפות קובעת ציפה" },
+      { q:"איזו אנרגיה נאגרת בקפיץ דחוס?", choices:["קינטית","פוטנציאלית אלסטית","תרמית","חשמלית"], correct:1, hint:"משתחררת בעבודה" },
+      { q:"מה קורה לבלון כשמשחררים אוויר?", choices:["נופל ישר","עף בזיגזג","נעמד במקום","מתפוצץ תמיד"], correct:1, hint:"האוויר הדוחף יוצר תנועה" },
+      { q:"מה מודד מדחום?", choices:["טמפרטורה","מסה","לחץ","מהירות"], correct:0, hint:"כמה חם או קר" },
+      { q:"איזה כוח מאט תנועה?", choices:["חיכוך","גרביטציה","ציפה","חשמל"], correct:0, hint:"מתנגד לתנועה" },
+      { q:"איזה כוח גורם למסלול מעגלי?", choices:["ציפה","צנטריפטלי","חיכוך","אלסטי"], correct:1, hint:"פונה אל המרכז" },
+      { q:"במעגל חשמלי סגור עם סוללה ונורה:", choices:["שום דבר","הנורה תדלק","הסוללה נעלמת","יהיה צליל"], correct:1, hint:"זרם זז במעגל סגור" },
+      { q:"איזה צבע נשבר הכי הרבה במים?", choices:["אדום","ירוק","כחול","סגול"], correct:3, hint:"קצה סגלגל של הקשת" },
+      { q:"למה השמש נראית גדולה בשקיעה?", choices:["האוויר מעוות אור","השמש מתקרבת","הירח מסתיר","השמש גדלה"], correct:0, hint:"אטמוספירה מעקמת אור" },
+      { q:"מה מקור האנרגיה לרוח?", choices:["השמש מחממת לא אחיד","הירח","מגנטים","רעש"], correct:0, hint:"הבדלי טמפ׳ ולחץ" },
+      { q:"מה קורה ללחץ האוויר בגובה?", choices:["עולה","יורד","קבוע","תלוי בשעה"], correct:1, hint:"פחות אוויר מעליך" },
+      { q:"מה יקרה לנר ללא חמצן?", choices:["יכבה","יתעצם","יקפא","ישחה"], correct:0, hint:"בעירה דורשת חמצן" },
+      { q:"מהי יחידת מסה בסיסית?", choices:["ניוטון","קילוגרם","מטר","אמפר"], correct:1, hint:"SI" },
+      { q:"מה קורה לכדור שנזרק למעלה?", choices:["נשאר למעלה","נעלם","עולה ואז יורד","עוצר באוויר"], correct:2, hint:"גרביטציה מחזירה" },
+      { q:"איזה מצב צבירה יש לענן?", choices:["נוזל","גז","קרח","פלזמה"], correct:1, hint:"אדי מים וטיפות זעירות" },
+      { q:"כשמגדילים אמפליטודת קול:", choices:["הצליל גבוה יותר","הקול חזק יותר","מהירות משתנה","הכול יחד"], correct:1, hint:"אמפליטודה = עוצמה" },
+      { q:"מה גורם למצנח להאט?", choices:["גרר אוויר","מנוע","מגנט","ציפה"], correct:0, hint:"שטח גדול = התנגדות" }
+    ];
+
+    /* ===== DOM ===== */
+    const el = {
+      bar: document.getElementById('bar'),
+      score: document.getElementById('score'),
+      total: document.getElementById('total'),
+      counter: document.getElementById('counter'),
+      question: document.getElementById('question'),
+      choices: document.getElementById('choices'),
+      hintBox: document.getElementById('hintBox'),
+      hintBtn: document.getElementById('hintBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      quizArea: document.getElementById('quizArea'),
+      summary: document.getElementById('summary'),
+      finalScore: document.getElementById('finalScore'),
+      finalTotal: document.getElementById('finalTotal'),
+      resultText: document.getElementById('resultText'),
+      restartBtn: document.getElementById('restartBtn'),
+      nextQuizBtn: document.getElementById('nextQuizBtn'),
+      newSetBtn: document.getElementById('newSetBtn'),
+      refreshBankBtn: document.getElementById('refreshBankBtn'),
+      audioToggle: document.getElementById('audioToggle'),
+      themeToggle: document.getElementById('themeToggle')
+    };
+    el.total.textContent = TOTAL_QUESTIONS;
+
+    /* ===== סאונד (WebAudio) עם טוגל ===== */
+    let isMuted = false, audioCtx = null, audioUnlocked = false;
+    function getAudioCtx(){
+      if(isMuted) return null;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      if(!audioCtx) audioCtx = new AC();
+      if(audioCtx.state !== 'running' && audioCtx.resume){ try{ audioCtx.resume(); }catch{} }
+      return audioCtx;
+    }
+    function unlockAudioOnce(){
+      if(audioUnlocked || isMuted) return;
+      const ctx = getAudioCtx(); if(!ctx) return;
+      try{
+        const buffer = ctx.createBuffer(1,1,ctx.sampleRate);
+        const src = ctx.createBufferSource(); const g=ctx.createGain();
+        g.gain.value = 0.0001; src.buffer = buffer; src.connect(g); g.connect(ctx.destination); src.start(0);
+        setTimeout(()=>{ try{ src.disconnect(); g.disconnect(); }catch{} audioUnlocked=true; },0);
+      }catch{}
+    }
+    function tone(freq, dur, t, type='sine', gain=0.22){
+      if(isMuted) return;
+      const ctx=getAudioCtx(); if(!ctx) return; const start = typeof t==='number'?t:ctx.currentTime;
+      const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(freq,start);
+      g.gain.setValueAtTime(gain,start); g.gain.exponentialRampToValueAtTime(0.001,start+dur);
+      o.connect(g); g.connect(ctx.destination); try{ o.start(start); o.stop(start+dur); }catch{}
+    }
+    function playTick(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(520, .08, t, 'triangle', .18); }
+    function playSuccess(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(523.25,.10,t,'sine',.18); tone(659.25,.10,t+.09,'sine',.16); tone(783.99,.12,t+.18,'sine',.14); }
+    function playError(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(220,.10,t,'square',.18); tone(180,.10,t+.09,'square',.16); }
+
+    // טוגל צליל
+    try{ isMuted = localStorage.getItem(LS_SOUND) === 'true'; }catch{ isMuted=false }
+    el.audioToggle.setAttribute('aria-pressed', isMuted?'true':'false');
+    el.audioToggle.textContent = (isMuted ? '🔇' : '🔊') + ' ' + 'צליל';
+    el.audioToggle.addEventListener('click', ()=>{
+      isMuted = !isMuted;
+      el.audioToggle.setAttribute('aria-pressed', isMuted?'true':'false');
+      el.audioToggle.textContent = (isMuted ? '🔇' : '🔊') + ' ' + 'צליל';
+      try{ localStorage.setItem(LS_SOUND, String(isMuted)); }catch{}
+      if(!isMuted) unlockAudioOnce();
+      playTick();
+    });
+    // פתיחת אודיו באינטראקציה ראשונה
+    ['pointerdown','touchstart','click','keydown'].forEach(ev=> window.addEventListener(ev, unlockAudioOnce, { once:true, passive:true }));
+
+    /* ===== Theme (כהה/בהיר) ===== */
+    (function initTheme(){
+      let stored=null; try{ stored = localStorage.getItem(LS_THEME); }catch{}
+      const wantsDark = stored ? stored==='dark' : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', wantsDark);
+      el.themeToggle.setAttribute('aria-pressed', wantsDark ? 'true' : 'false');
+      el.themeToggle.textContent = (wantsDark ? '🌞' : '🌗') + ' מצב ' + (wantsDark ? 'בהיר' : 'כהה');
+    })();
+    el.themeToggle.addEventListener('click', ()=>{
+      const nowDark = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', nowDark);
+      el.themeToggle.setAttribute('aria-pressed', nowDark ? 'true':'false');
+      el.themeToggle.textContent = (nowDark ? '🌞' : '🌗') + ' מצב ' + (nowDark ? 'בהיר' : 'כהה');
+      try{ localStorage.setItem(LS_THEME, nowDark?'dark':'light'); }catch{}
+      playTick();
+    });
+
+    /* ===== טעינת מאגר ===== */
+    async function fetchBankNoStore(){
+      const res = await fetch(BANK_URL, { cache:'no-store' });
+      if(!res.ok) throw new Error('Bad status');
+      const json = await res.json();
+      if(!Array.isArray(json) || !json.length) throw new Error('Empty JSON');
+      return json;
+    }
+    async function loadQuestionBank({forceNetwork=false} = {}){
+      // 1) רשת (אם forceNetwork=true או אין קאש)
+      if(forceNetwork){
+        try{
+          const bank = await fetchBankNoStore();
+          try{
+            localStorage.setItem(LS_BANK, JSON.stringify(bank));
+            localStorage.setItem(LS_BANK_TS, String(Date.now()));
+          }catch{}
+          return bank;
+        }catch{/* נמשיך לניסיון קאש/מקומי */}
+      }
+      // 2) קאש מהיר ב-localStorage
+      try{
+        const cached = JSON.parse(localStorage.getItem(LS_BANK) || '[]');
+        if(cached && cached.length) return cached;
+      }catch{}
+      // 3) ניסיון רשת רגיל
+      try{
+        const bank = await fetchBankNoStore();
+        try{
+          localStorage.setItem(LS_BANK, JSON.stringify(bank));
+          localStorage.setItem(LS_BANK_TS, String(Date.now()));
+        }catch{}
+        return bank;
+      }catch{
+        // 4) נפילה לבנק המקומי
+        return localBigBank;
+      }
+    }
+
+    /* ===== רענון מאגר ===== */
+    async function refreshBank(){
+      el.refreshBankBtn.disabled = true;
+      el.refreshBankBtn.textContent = '⏳ מרענן…';
+      try{
+        bankLoaded = await loadQuestionBank({forceNetwork:true});
+        playSuccess();
+      }catch{
+        playError();
+      }finally{
+        el.refreshBankBtn.disabled = false;
+        el.refreshBankBtn.textContent = '♻️ רענן מאגר';
+      }
+    }
+    el.refreshBankBtn.addEventListener('click', async ()=>{
+      await refreshBank();
+      await newSession(/* keep current filters in the future */);
+    });
+
+    /* ===== משחק ===== */
+    function render(){
+      locked = false;
+      const item = quizData[idx];
+      el.question.textContent = item?.q || '—';
+      el.choices.innerHTML = '';
+      el.hintBox.style.display = 'none';
+      el.hintBox.textContent = '';
+      hintStep = -1;
+
+      // רמז/צעדים קיימים?
+      const hasAssist = (item?.steps && item.steps.length) || item?.hint;
+      el.hintBtn.disabled = !hasAssist;
+      el.hintBtn.textContent = (item?.steps && item.steps.length) ? 'הצג צעד' : 'הצג רמז';
+
+      el.nextBtn.disabled = true;
+
+      el.counter.innerHTML = `שאלה <b class="ltr">${idx+1}</b> מתוך <b class="ltr">${quizData.length}</b>`;
+      const progress = Math.round((idx / quizData.length) * 100);
+      el.bar.style.width = progress + '%';
+      el.bar.setAttribute('aria-valuenow', String(progress));
+
+      (item?.choices || []).forEach((txt, i) => {
+        const b = document.createElement('button');
+        b.className = 'btn';
+        b.type = 'button';
+        b.textContent = txt;
+        b.setAttribute('role','option');
+        b.addEventListener('click', () => selectAnswer(i, b));
+        el.choices.appendChild(b);
+      });
+    }
+
+    function selectAnswer(choiceIndex, btn){
+      if(locked) return;
+      locked = true; playTick();
+
+      const item = quizData[idx];
+      const correct = item.correct;
+
+      [...el.choices.children].forEach((b, i) => {
+        b.disabled = true;
+        if(i === correct) b.classList.add('correct');
+      });
+
+      if(choiceIndex === correct){
+        score++; el.score.textContent = String(score); playSuccess();
+      }else{
+        btn.classList.add('wrong'); playError();
+        onWrongAnswer(item);
+      }
+
+      el.nextBtn.disabled = false;
+    }
+
+    function onWrongAnswer(item){
+      if(item.steps && item.steps.length){
+        hintStep = 0;
+        el.hintBox.textContent = item.steps[0];
+        el.hintBox.style.display = 'block';
+        el.hintBtn.textContent = (item.steps.length > 1) ? 'הצעד הבא' : 'סיום צעדים';
+        el.hintBtn.disabled = (item.steps.length <= 1);
+      }else if(item.hint){
+        el.hintBox.textContent = item.hint;
+        el.hintBox.style.display = 'block';
+        el.hintBtn.disabled = true;
+      }
+    }
+
+    el.hintBtn.addEventListener('click', ()=>{
+      const item = quizData[idx]; if(!item) return;
+      if(item.steps && item.steps.length){
+        hintStep++;
+        const stepText = item.steps[Math.min(hintStep, item.steps.length-1)];
+        el.hintBox.textContent = stepText;
+        el.hintBox.style.display = 'block';
+        const moreLeft = hintStep < item.steps.length - 1;
+        el.hintBtn.textContent = moreLeft ? 'הצעד הבא' : 'סיום צעדים';
+        if(!moreLeft) el.hintBtn.disabled = true;
+      }else if(item.hint){
+        el.hintBox.textContent = item.hint;
+        el.hintBox.style.display = 'block';
+        el.hintBtn.disabled = true;
+      }
+      playTick();
+    });
+
+    el.nextBtn.addEventListener('click', ()=>{
+      if(idx < quizData.length - 1){
+        idx++; render();
+      }else{
+        finish();
+      }
+      playTick();
+    });
+
+    // כפתור "סט חדש" (אותו מאגר טעון)
+    el.newSetBtn.addEventListener('click', ()=>{
+      buildSessionFromLoadedBank();
+      playTick();
+    });
+
+    // "עוד חידון" — טען שוב מהמאגר (עם no-store אם תרצה: מרענן עם refreshBank)
+    el.nextQuizBtn.addEventListener('click', async ()=>{
+      await refreshBank();
+      await newSession();
+    });
+
+    el.restartBtn.addEventListener('click', ()=>{
+      newSession();
+      playTick();
+    });
+
+    // קיצורי מקלדת: 1/2/3/4 בחירה; N לשאלה הבאה
+    document.addEventListener('keydown', (e)=>{
+      const k = e.key.toLowerCase();
+      if(['1','2','3','4'].includes(k) && el.choices.children.length){
+        const i = parseInt(k,10)-1;
+        const b = el.choices.children[i];
+        if(b) b.click();
+      }else if(k==='n' && !el.nextBtn.disabled){
+        el.nextBtn.click();
+      }
+    });
+
+    function finish(){
+      el.bar.style.width = '100%'; el.bar.setAttribute('aria-valuenow','100');
+      el.quizArea.style.display = 'none';
+      el.summary.style.display = 'block';
+      el.finalScore.textContent = String(score);
+      el.finalTotal.textContent = String(quizData.length);
+
+      const pct = Math.round((score/quizData.length)*100);
+      let msg = "יפה מאוד! המשיכו לסקרן ולשאול שאלות.";
+      if(pct === 100) msg = "מושלם! אתם אלופי פיזיקה קטנים! 💫";
+      else if(pct >= 80) msg = "מעולה! כמעט מושלם – נסו שוב לשבור שיא.";
+      else if(pct >= 50) msg = "לא רע! עוד סיבוב קטן ויש שיפור.";
+      else msg = "כל התחלה קשה – נסו שוב ותראו קפיצה.";
+      el.resultText.textContent = msg;
+    }
+
+    function buildSessionFromLoadedBank(){
+      quizData = pickRandomQuestions(bankLoaded, TOTAL_QUESTIONS);
+      idx = 0; score = 0; locked = false;
+      el.score.textContent = '0';
+      el.total.textContent = String(quizData.length);
+      el.quizArea.style.display = 'block';
+      el.summary.style.display = 'none';
+      render();
+    }
+
+    async function newSession(){
+      // אם כבר נטען מאגר קודם, סשן חדש ממנו; אחרת טען ואז בנה
+      if(!bankLoaded.length){
+        bankLoaded = await loadQuestionBank();
+      }
+      buildSessionFromLoadedBank();
+    }
+
+    // הפעלה ראשונית
+    (async function init(){
+      await newSession();
+    })();
+  </script>
+</body>
+</html>
