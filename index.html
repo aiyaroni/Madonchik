@@ -16,10 +16,8 @@
       --radius:16px; --shadow:0 10px 26px rgba(0,0,0,.12);
     }
     body{font-family:'Assistant',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink)}
-    .subhead{font-weight:600;font-size:clamp(1.05rem, .9rem + .7vw, 1.25rem); line-height:1.35; color:#374151}
-    .title-xl{font-weight:800; font-size:clamp(1.75rem, 1.2rem + 1.6vw, 2.25rem); line-height:1.2}
 
-    /* כרטיס בחירה - רקע אטום למניעת "דהייה" מהקונטיינר */
+    .subhead{font-weight:600;font-size:clamp(1.05rem, .9rem + .7vw, 1.25rem); line-height:1.35; color:#374151}
     .choice-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;
       background:#fff; border:2px solid transparent; border-radius:1.25rem; padding:1.15rem;
       box-shadow:var(--shadow); transition:.18s; cursor:pointer; outline:none; user-select:none; min-height:92px}
@@ -35,7 +33,7 @@
     .chip.selected{border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.20)}
 
     .answer-item{position:relative;transition:transform .14s,box-shadow .14s,border-color .14s;cursor:pointer;user-select:none;
-      -webkit-user-select:none;-webkit-tap-highlight-color:transparent;background:#fff;border-radius:1rem;border:2px solid transparent;outline:none; min-height:88px;
+      -webkit-user-select:none;-webkit-tap-highlight-color:transparent;background:rgba(255,255,255,1);border-radius:1rem;border:2px solid transparent;outline:none; min-height:88px;
       display:flex;align-items:center;justify-content:center;padding:1rem}
     .answer-item:active{transform:scale(.98)}
     .answer-item.selected{border-color:#2563eb;box-shadow:0 12px 30px rgba(0,0,0,.18)}
@@ -65,7 +63,7 @@
     #topicsFade{position:absolute; inset-inline:0; bottom:0; height:64px;
       background:linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0)); pointer-events:none;}
 
-    /* A11y helpers */
+    /* Accessibility helpers */
     .no-focus-outline:focus{outline:none !important; box-shadow:none !important}
   </style>
 </head>
@@ -82,7 +80,7 @@
   <div id="welcomeScreen" class="flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
       <img src="/assets/shofi.gif" alt="שופי הינשוף" class="w-20 h-20 mx-auto mb-4 rounded-xl" onerror="this.outerHTML='<div class=&quot;text-6xl mb-4 pulse&quot;>🦉</div>'">
-      <h1 id="welcomeTitle" tabindex="-1" class="no-focus-outline title-xl text-purple-600 mb-3">מדעונצ'יק</h1>
+      <h1 id="welcomeTitle" tabindex="-1" class="no-focus-outline text-4xl font-extrabold text-purple-600 mb-3">מדעונצ'יק</h1>
       <p class="text-2xl text-gray-700 mb-8">שופי הינשוף מחכה לכם לחידון מדע כיפי</p>
       <button type="button" id="startBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-200 shadow-lg">התחל</button>
     </div>
@@ -96,7 +94,7 @@
   <div id="nameScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <form id="nameForm" class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
       <div class="text-5xl mb-4">👋</div>
-      <h2 id="nameTitle" tabindex="-1" class="no-focus-outline title-xl text-blue-600 mb-2">איך קוראים לך?</h2>
+      <h2 id="nameTitle" tabindex="-1" class="no-focus-outline text-3xl font-extrabold text-blue-600 mb-2">איך קוראים לך?</h2>
       <p id="nameSubtitle" class="text-gray-600 mb-4 hidden"></p>
       <input type="text" id="playerName" name="playerName" required placeholder="הכניסו את שמכם כאן" class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl mb-3 text-center focus:border-blue-500 focus:outline-none">
       <div class="text-center mb-6">
@@ -122,8 +120,8 @@
   <div id="topicsScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-4xl w-full">
       <div class="text-5xl mb-4">📚</div>
-      <h2 id="topicsTitle" tabindex="-1" class="no-focus-outline title-xl text-green-600 mb-2 leading-tight">איזה נושא מעניין אתכם היום?</h2>
-      <p class="subhead mb-6">בחרו נושא אחד או יותר ואז המשיכו</p>
+      <h2 id="topicsTitle" tabindex="-1" class="no-focus-outline text-3xl md:text-4xl font-extrabold text-green-600 mb-2 leading-tight">מה בא לך ללמוד??</h2>
+      <p class="subhead mb-6">אפשר לבחור נושא אחג או יותר</p>
 
       <div id="topicsWrapper" class="relative mb-6">
         <div id="topicsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 topics-collapsed"></div>
@@ -141,10 +139,11 @@
   <div id="programScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-xl w-full">
       <div class="text-5xl mb-4">🎯</div>
-      <h2 class="title-xl text-indigo-600 mb-2">איזו תכנית לימוד מתאימה?</h2>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-indigo-600 mb-2">עכשיו נבחר תכנית לימוד?</h2>
       <p class="subhead mb-6">בחרו את הכיתה שלכם</p>
 
-      <div id="programGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6"></div>
+      <!-- תמיד 2×2 -->
+      <div id="programGrid" class="grid grid-cols-2 gap-4 mb-6"></div>
 
       <div class="flex items-center justify-center gap-3 flex-wrap">
         <button id="programNext" class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg disabled:opacity-50" disabled aria-disabled="true">המשך</button>
@@ -156,7 +155,7 @@
   <div id="settingsScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-xl w-full">
       <div class="text-5xl mb-4">⚙️</div>
-      <h2 class="title-xl text-emerald-600 mb-4">מספר השאלות במשחק</h2>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-emerald-600 mb-2">נבחר את מספר השאלות</h2>
 
       <div class="mb-6">
         <div id="countChips" class="flex flex-wrap gap-2 justify-center">
@@ -166,7 +165,7 @@
         </div>
       </div>
 
-      <h2 class="title-xl text-blue-600 mb-3">איזו רמת קושי מתאימה לך היום?</h2>
+      <h3 class="text-2xl font-extrabold text-blue-600 mb-3">מה רמת הקושי שנבחר להיום?</h3>
       <div id="difficultyChips" class="flex flex-wrap gap-2 justify-center mb-6">
         <button type="button" class="chip" data-diff="easy" aria-pressed="false">🙂 קל</button>
         <button type="button" class="chip" data-diff="medium" aria-pressed="false">💪 בינוני</button>
@@ -219,7 +218,7 @@
   <div id="resultsScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full relative overflow-hidden">
       <div class="text-8xl mb-4">🏆</div>
-      <h2 id="resultsTitle" tabindex="-1" class="no-focus-outline title-xl text-green-600 mb-4">כל הכבוד</h2>
+      <h2 id="resultsTitle" tabindex="-1" class="no-focus-outline text-3xl font-extrabold text-green-600 mb-4">כל הכבוד</h2>
       <div class="mb-6">
         <div class="flex justify-between items-center mb-2">
           <span class="text-sm font-medium text-gray-600">הביצועים שלך:</span>
@@ -257,7 +256,7 @@
   <!-- Learn from Mistakes -->
   <div id="mistakesScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-3xl w-full">
-      <h2 class="title-xl text-amber-600 mb-4 text-center">לומדים מהטעויות</h2>
+      <h2 class="text-3xl font-extrabold text-amber-600 mb-4 text-center">לומדים מהטעויות</h2>
       <div id="mistakesList" class="space-y-3 mb-6"></div>
       <div class="flex gap-3 justify-center">
         <button id="backToResultsBtn" class="px-6 py-3 rounded-full bg-gray-100 hover:bg-gray-200 font-bold">חזרה לסיכום</button>
@@ -270,7 +269,7 @@
   <div id="profileScreen" class="hidden min-h-screen p-6">
     <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-4xl mx-auto">
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h2 class="title-xl text-indigo-600">האזור האישי</h2>
+        <h2 class="text-3xl font-extrabold text-indigo-600">האזור האישי</h2>
         <div class="flex gap-2">
           <button id="profileStartBtn" class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">התחל משחק</button>
           <button id="profileSwitchBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700">החלף משתמש</button>
@@ -298,7 +297,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" id="byTopicGrid"></div>
 
       <div>
-        <h3 class="text-2xl font-extrabold text-gray-800 mb-3">היסטוריית סטים</h3>
+        <h3 class="text-2ל font-extrabold text-gray-800 mb-3">היסטוריית סטים</h3>
         <div id="historyList" class="space-y-2"></div>
       </div>
     </div>
@@ -310,7 +309,7 @@
     let playerName = '', questionCount = 6;
     let currentQuestionIndex = 0, correctCount = 0, totalQuestions = 6;
     let questions = [], selectedAnswer = null, startTime = 0, totalTime = 0;
-    let wrongAnswers = [];
+    let wrongAnswers = []; // למסך "למד מהטעויות"
 
     const STORE_KEY='mdnc_profiles_v2';
     const RECENT_KEY='mdnc_recent_ids_v2';
@@ -378,6 +377,13 @@
       if(el.disabled||el.getAttribute('aria-disabled')==='true') return;
       if(wasLocked) setTimeout(playSelectTick,0); else playSelectTick();
     });
+    function initAudioToggle(){
+      const btn=$('#audioToggle'); if(!btn) return;
+      try{ isMuted=localStorage.getItem('mdnc_sound_muted')==='true'; }catch{ isMuted=false; }
+      btn.setAttribute('aria-pressed', isMuted?'true':'false');
+      btn.textContent = isMuted ? '🔇' : '🔊';
+      btn.addEventListener('click',()=>{ isMuted=!isMuted; btn.setAttribute('aria-pressed', isMuted?'true':'false'); btn.textContent = isMuted ? '🔇' : '🔊'; try{ localStorage.setItem('mdnc_sound_muted', String(isMuted)); }catch{} if(!isMuted) unlockAudioOnce(); });
+    }
 
     /* ========= Helpers ========= */
     const $=sel=>document.querySelector(sel);
@@ -411,13 +417,13 @@
     ];
 
     const Programs = [
-      {key:'p1', label:'כיתה א', emoji:'🎒'},
-      {key:'p2', label:'כיתה ב', emoji:'✏️'},
-      {key:'p3', label:'כיתות ג-ד', emoji:'🔬'},
-      {key:'p4', label:'כיתות ה-ז', emoji:'🧪'},
+      {key:'p1', label:'א', emoji:'🎒'},
+      {key:'p2', label:'ב', emoji:'✏️'},
+      {key:'p3', label:'ג-ד', emoji:'🔬'},
+      {key:'p4', label:'ה-ז', emoji:'🧪'},
     ];
 
-    // Seed concepts
+    // Seed concepts (עברית תקינה + סימן שאלה תמיד יתווסף)
     const SEED = [
       {id:'grav_1', topic:'gravity', level:'easy', templates:['מה מושך חפצים אל הקרקע?'], choices:['חיכוך','כוח המשיכה','מגנטיות','רוח'], correct:1, hint:'כוח שמושך הכול אל מרכז כדור הארץ.'},
       {id:'grav_2', topic:'gravity', level:'medium', templates:['למה כדור שנזרק למעלה חוזר למטה?'], choices:['כי אין אוויר','כוח המשיכה מחזיר אותו','בגלל אור','כי הוא קל'], correct:1, hint:'כוח המשיכה פועל תמיד כלפי מטה.'},
@@ -428,7 +434,7 @@
       {id:'light_1', topic:'light', level:'easy', templates:['למה רואים ברק לפני ששומעים רעם?'], choices:['קול מהיר יותר','אור מהיר יותר','זה קורה יחד','תלוי בעננים'], correct:1, hint:'האור נע מהר יותר מהקול.'},
       {id:'light_2', topic:'light', level:'medium', templates:['איזה צבע נשבר הכי הרבה במים?'], choices:['אדום','ירוק','כחול','סגול'], correct:3, hint:'צד הסגול בקשת נשבר יותר במים.'},
 
-      {id:'snd_1', topic:'sound', level:'easy', templates:['כשמעלים את עוצמת הצליל מה קורה?'], choices:['הצליל גבוה יותר','הקול חזק יותר','מהירות משתנה','הכול יחד'], correct:1, hint:'אמפליטודה קשורה לעוצמה, לא לגובה הצליל.'},
+      {id:'snd_1', topic:'sound', level:'easy', templates:['כשמעלים את עוצמת הצליל מה קורה?'], choices:['הצליל גבוה יותר','הקול חזק יותר','מהירות משתנה','הכול יחד'], correct:1, hint:'אמפליטודה = גובה הגל. גובה גל גדול יותר = קול חזק יותר.'},
       {id:'snd_2', topic:'sound', level:'medium', templates:['קול נע דרך מה?'], choices:['ריק מוחלט בלבד','חומר כמו אוויר או מים','רק מתכת','רק חוטים'], correct:1, hint:'קול הוא גל מכני וצריך תווך חומרי.'},
 
       {id:'elec_1', topic:'electric', level:'easy', templates:['במעגל סגור עם סוללה ונורה, מה יקרה?'], choices:['שום דבר','הנורה תדלק','הסוללה נעלמת','יהיה צליל'], correct:1, hint:'זרם עובר במעגל סגור והנורה נדלקת.'},
@@ -475,14 +481,27 @@
     }
     const BIG_BANK = expandBank(SEED);
 
-    function getRecentIds(){ try{ const arr=JSON.parse(sessionStorage.getItem(RECENT_KEY)||'[]'); return Array.isArray(arr)?arr:[]; }catch{ return []; } }
-    function pushRecentIds(ids){ try{ const cur=getRecentIds(); const merged=[...ids, ...cur].slice(0, 120); sessionStorage.setItem(RECENT_KEY, JSON.stringify(merged)); }catch{} }
+    function getRecentIds(){
+      try{ const arr=JSON.parse(sessionStorage.getItem(RECENT_KEY)||'[]'); return Array.isArray(arr)?arr:[]; }catch{ return []; }
+    }
+    function pushRecentIds(ids){
+      try{
+        const cur=getRecentIds();
+        const merged=[...ids, ...cur].slice(0, 120);
+        sessionStorage.setItem(RECENT_KEY, JSON.stringify(merged));
+      }catch{}
+    }
 
     function filterByTopicsAndDiff(bank, topics, diff){
       return bank.filter(q => topics.has(q.topic) && (diff ? q.level===diff : true));
     }
     function siblingTopics(t){
-      const groups = [['motion','gravity','magnet'],['light','sound'],['matter','energy','measure'],['space']];
+      const groups = [
+        ['motion','gravity','magnet'],
+        ['light','sound'],
+        ['matter','energy','measure'],
+        ['space']
+      ];
       const g = groups.find(gr => gr.includes(t)) || [];
       return new Set(g);
     }
@@ -490,44 +509,53 @@
       let pool = [];
       const bySel = filterByTopicsAndDiff(BIG_BANK, topicsSel, diff);
       pool = pool.concat(bySel);
+
       if(pool.length < requiredCount){
         const near = new Set();
         topicsSel.forEach(t => siblingTopics(t).forEach(n=>near.add(n)));
         const nearPool = BIG_BANK.filter(q => near.has(q.topic) && (diff ? q.level===diff : true));
         pool = pool.concat(nearPool);
       }
-      if(pool.length < requiredCount){ pool = pool.concat(BIG_BANK.filter(q => diff ? q.level===diff : true)); }
+      if(pool.length < requiredCount){
+        pool = pool.concat(BIG_BANK.filter(q => diff ? q.level===diff : true));
+      }
       if(pool.length < requiredCount){
         const alt = diff==='easy'?['medium'] : diff==='hard'?['medium'] : ['easy','hard'];
         const altPool = BIG_BANK.filter(q => alt.includes(q.level));
         pool = pool.concat(altPool);
       }
       const seenConcept=new Set(); const unique=[];
-      shuffle(pool).forEach(q=>{ if(!seenConcept.has(q.conceptId)){ seenConcept.add(q.conceptId); unique.push(q); } });
+      shuffle(pool).forEach(q=>{
+        if(!seenConcept.has(q.conceptId)){ seenConcept.add(q.conceptId); unique.push(q); }
+      });
       return unique;
     }
 
     function buildUniqueSet(requiredCount, topicsSel, diff){
       const recent = new Set(getRecentIds());
       const pool = buildPoolWithFallback(requiredCount*4, topicsSel, diff);
-      const selected = []; const usedConcept = new Set();
+      const selected = [];
+      const usedConcept = new Set();
 
       for(const q of pool){
         if(selected.length >= requiredCount) break;
         if(usedConcept.has(q.conceptId)) continue;
         if(recent.has(q.conceptId)) continue;
-        selected.push(q); usedConcept.add(q.conceptId);
+        selected.push(q);
+        usedConcept.add(q.conceptId);
       }
       if(selected.length < requiredCount){
         for(const q of pool){
           if(selected.length >= requiredCount) break;
           if(usedConcept.has(q.conceptId)) continue;
-          selected.push(q); usedConcept.add(q.conceptId);
+          selected.push(q);
+          usedConcept.add(q.conceptId);
         }
       }
       if(selected.length < requiredCount){
         alert('אין מספיק שאלות לסט שבחרתם. נסו לבחור נושאים נוספים.');
-        const rest = []; const seen = new Set(selected.map(x=>x.conceptId));
+        const rest = [];
+        const seen = new Set(selected.map(x=>x.conceptId));
         for(const q of BIG_BANK){
           if(rest.length + selected.length >= requiredCount) break;
           if(!seen.has(q.conceptId)){ rest.push(q); seen.add(q.conceptId); }
@@ -557,11 +585,24 @@
     }
     let isTopicsExpanded=false;
     function refreshTopicsOverflow(){
-      const grid=$('#topicsGrid'), more=$('#topicsMore'), fade=$('#topicsFade');
+      const grid = $('#topicsGrid'), more = $('#topicsMore'), fade = $('#topicsFade');
       if(!grid||!more||!fade) return;
-      const overflow=grid.scrollHeight>grid.clientHeight+2 || grid.children.length>4;
-      more.classList.toggle('hidden', !overflow && !isTopicsExpanded);
-      fade.classList.toggle('hidden', isTopicsExpanded || !overflow);
+
+      // כמה פריטים נראים בפועל
+      const all = [...grid.children];
+      const visible = all.filter(el => el.offsetParent !== null).length;
+
+      // האם יש גלילה אמיתית?
+      const overflowByHeight = grid.scrollHeight > grid.clientHeight + 2;
+
+      // האם יש פריטים חבויים?
+      const hasHidden = visible < all.length;
+
+      // "הצג עוד" רק אם יש פריטים חבויים ואנחנו במצב מכווץ
+      more.classList.toggle('hidden', !(hasHidden && !isTopicsExpanded));
+
+      // פייד רק כשבאמת נחתך תוכן (לא על 4 פריטים בלבד)
+      fade.classList.toggle('hidden', !(overflowByHeight && !isTopicsExpanded));
     }
     function setTopicsExpanded(expanded){
       isTopicsExpanded=!!expanded;
@@ -614,7 +655,10 @@
       currentQuestionIndex=0; correctCount=0; selectedAnswer=null; totalTime=0;
       showScreen('gameScreen'); showQuestion(); focusTop('#questionText'); updateStatus('יצאנו לדרך - בחרו תשובה ואז אשרו');
     }
-    function normalizeQuestionMark(txt){ const q=(txt||'').trim(); return q.endsWith('?') ? q : (q + '?'); }
+    function normalizeQuestionMark(txt){
+      const q = (txt||'').trim();
+      return q.endsWith('?') ? q : (q + '?');
+    }
     function showQuestion(){
       if(currentQuestionIndex>=questions.length){ showResultsWithModal(); return; }
       selectedAnswer=null;
@@ -622,7 +666,7 @@
       $('#questionText').textContent = normalizeQuestionMark(q.q);
       $('#currentQuestion').textContent=currentQuestionIndex+1;
 
-      // עדכון פרוגרס לפי מספר שאלה נוכחי
+      // פרוגרס מייצג שאלות שנענו, אז בתחילת השאלה הנוכחית הוא index/total.
       const prog=(currentQuestionIndex/totalQuestions)*100;
       const pb=$('#progressBar');
       const p=Math.round(prog);
@@ -637,11 +681,12 @@
         d.setAttribute('role','button');
         d.setAttribute('aria-selected','false');
 
+        // יישור מרכז ותמיכה RTL/LTR לפי תוכן
         const wordCount = (opt.txt||'').trim().split(/\s+/).filter(Boolean).length;
         const isLatin = onlyDigitsLatin(opt.txt);
         const clsDir = isLatin ? 'ltr' : 'rtl';
         const textDiv = document.createElement('div');
-        textDiv.className = `answer-text ${clsDir} ${wordCount>3?'text-center':''}`;
+        textDiv.className = `answer-text ${clsDir}`; // תמיד ממורכז ב-CSS
         textDiv.textContent = opt.txt;
 
         d.appendChild(textDiv);
@@ -681,13 +726,13 @@
         });
       }
 
-      // אם זו השאלה האחרונה, מלא את הפרוגרס ל־100% לפני המודאל
-      if(currentQuestionIndex===totalQuestions-1){
-        const pb=$('#progressBar'); pb.style.width='100%'; pb.setAttribute('aria-valuenow','100');
-        showResultsWithModal();
-      } else {
-        currentQuestionIndex++; showQuestion();
-      }
+      // עדכן פרוגרס לאחר מענה (כולל 100% בשאלה האחרונה)
+      const answered = Math.min(currentQuestionIndex+1, totalQuestions);
+      const pct = Math.round((answered/totalQuestions)*100);
+      const pb=$('#progressBar'); pb.style.width=pct+'%'; pb.setAttribute('aria-valuenow',String(pct));
+
+      if(currentQuestionIndex===totalQuestions-1){ showResultsWithModal(); }
+      else{ currentQuestionIndex++; showQuestion(); }
     });
 
     function showResultsWithModal(){
@@ -718,6 +763,7 @@
       logSessionToProfile(topicsSummary);
       pushRecentIds(questions.map(q=>q.conceptId));
 
+      // "ללמוד מהטעויות" זמין רק אם יש טעויות
       const learnBtn = $('#learnBtn');
       learnBtn.disabled = wrongAnswers.length===0;
       learnBtn.classList.toggle('opacity-50', wrongAnswers.length===0);
@@ -742,18 +788,21 @@
     /* ========= Learn from Mistakes ========= */
     const TERM_EXPLAIN = {
       'קינטית': 'אנרגיית תנועה. כשחפץ נע, יש לו אנרגיה קינטית — ככל שהוא נע מהר או כבד יותר, האנרגיה גדולה יותר.',
-      'אמפליטודה': 'גובה הגל. בקול, אמפליטודה גבוהה פירושה קול חזק יותר, לא צליל גבוה יותר.',
+      'אמפליטודה': 'גובה הגל. בקול, אמפליטודה גבוהה פירושה קול חזק יותר (לא “צליל גבוה” יותר).',
       'צפיפות': 'כמה חומר יש בנפח מסוים. אם צפיפות הספינה קטנה מזו של מים — היא צפה.'
     };
     function getSimpleExplanation(item){
       const add = [];
       const words = `${item.q} ${item.correct}`.split(/\s+/);
-      Object.keys(TERM_EXPLAIN).forEach(k=>{ if(words.some(w=>w.includes(k))) add.push(TERM_EXPLAIN[k]); });
+      Object.keys(TERM_EXPLAIN).forEach(k=>{
+        if(words.some(w=>w.includes(k))) add.push(TERM_EXPLAIN[k]);
+      });
       const base = item.hint ? item.hint : '';
       if(base && add.length) return base + ' ' + add.join(' ');
       if(add.length) return add.join(' ');
-      return base || 'הסבר: בואו נחשוב על העיקרון הפיזיקלי המרכזי בשאלה.';
+      return base || 'הסבר: ננסה לתאר את העיקרון המרכזי בפשטות ובדוגמה יומיומית.';
     }
+
     function renderMistakes(){
       const box = $('#mistakesList'); box.innerHTML='';
       if(wrongAnswers.length===0){
@@ -773,7 +822,9 @@
         `;
         const btn = card.querySelector('.toggle-exp');
         const expDiv = card.querySelector('.exp');
-        btn.addEventListener('click', ()=>{ expDiv.classList.toggle('hidden'); });
+        btn.addEventListener('click', ()=>{
+          expDiv.classList.toggle('hidden');
+        });
         box.appendChild(card);
       });
     }
@@ -795,7 +846,7 @@
     }
 
     /* ========= Profile ========= */
-    function showProfile(){ showScreen('profileScreen'); renderProfile(); focusTop('#profileScreen .title-xl'); updateStatus(''); }
+    function showProfile(){ showScreen('profileScreen'); renderProfile(); focusTop('#profileScreen .text-indigo-600'); updateStatus(''); }
     function setSwitchBtnDisabled(disabled){ const btn=$('#profileSwitchBtn'); if(!btn) return; btn.disabled=disabled; btn.classList.toggle('opacity-50', disabled); btn.classList.toggle('cursor-not-allowed', disabled); }
     function renderProfile(){
       const prof=getActiveProfile(); const header=$('#profileHeader'); const totalUsers=profilesArr().length;
@@ -835,9 +886,9 @@
           const pct=Math.round((item.correct/item.count)*100);
           const row=document.createElement('div');
           row.className='p-3 border-2 border-gray-200 rounded-xl bg-white flex items-center justify-between gap-3';
-          const date=new Date(item.ts).toLocaleString('he-IL',{dateStyle:'short', timeStyle:'short'});
+          const date=new Date(item.ts).toLocaleString('ה־IL',{dateStyle:'short', timeStyle:'short'});
           row.innerHTML=`<div>
-              <div class="text-sm text-gray-500">${date}</div>
+              <div class="text-sm text-gray-500">${new Date(item.ts).toLocaleString('he-IL',{dateStyle:'short', timeStyle:'short'})}</div>
               <div class="text-gray-800">${item.topics.map(k=> Topics.find(t=>t.key===k)?.label || k).join(' - ')}</div>
               <div class="text-sm text-gray-500">רמה: ${item.diff} - שאלות: ${item.count}</div>
             </div>
@@ -882,7 +933,7 @@
       $('#topicsNext')?.addEventListener('click',()=> showProgram());
       $('#programNext')?.addEventListener('click',()=> showSettings());
 
-      // Settings: אין סימון ברירת מחדל. המשתמש חייב לבחור.
+      // settings: count & difficulty (אין ברירת מחדל)
       $('#countChips')?.addEventListener('click', e=>{
         const chip = e.target.closest('.chip'); if(!chip) return;
         $$('#countChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
@@ -899,13 +950,16 @@
       });
       $('#settingsNext')?.addEventListener('click',()=> startGame());
 
-      // Game
+      // game
       $('#restartBtn')?.addEventListener('click',()=> showNameInput());
 
-      // Results actions
+      // results actions
       $('#retryBtn')?.addEventListener('click',()=> startGame());
       $('#altBtn')?.addEventListener('click',()=> showTopics());
-      $('#learnBtn')?.addEventListener('click',()=>{ showScreen('mistakesScreen'); renderMistakes(); });
+      $('#learnBtn')?.addEventListener('click',()=>{
+        showScreen('mistakesScreen');
+        renderMistakes();
+      });
       $('#backToResultsBtn')?.addEventListener('click',()=> showScreen('resultsScreen'));
       $('#fromMistakesStartBtn')?.addEventListener('click',()=> showTopics());
 
@@ -962,9 +1016,12 @@
     }
     function showSettings(){
       showScreen('settingsScreen');
-      // אין ברירת מחדל. מאפסים בחירות ומשחררים סימון.
       selectedCount = null; selectedDifficulty = null;
-      $$('#countChips .chip, #difficultyChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+
+      // נקה בחירות קיימות
+      $$('#countChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+      $$('#difficultyChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+
       updateSettingsNext();
       focusTop('#settingsScreen h2');
     }
