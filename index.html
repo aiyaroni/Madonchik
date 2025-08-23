@@ -20,29 +20,34 @@
     @keyframes blink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
     @media (prefers-reduced-motion: reduce){ .owl-blink{ animation:none } }
 
-    /* ===== Reusable UI (מספרונצ'יק שפה) ===== */
-    .choice-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;
-      background:rgba(255,255,255,.96); border:2px solid transparent; border-radius:1.25rem; padding:1.15rem;
-      box-shadow:var(--shadow); transition:.18s; cursor:pointer; outline:none; user-select:none; min-height:92px}
+    /* ===== Reusable UI (מספרונצ'יק שפה, משקלים מדויקים) ===== */
+    .choice-card{
+      position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;
+      background:rgba(255,255,255,.96); border:2px solid transparent; border-radius:1.25rem; padding:1.1rem 1.15rem;
+      box-shadow:var(--shadow); transition:.18s; cursor:pointer; outline:none; user-select:none; min-height:92px
+    }
     .choice-card:hover{transform:translateY(-2px)}
     .choice-card:active{transform:scale(.98)}
     .choice-card.selected{border-color:#2563eb; box-shadow:0 12px 30px rgba(0,0,0,.18)}
     .choice-card .emoji{font-size:2rem}
-    .chip{min-width:68px; min-height:52px; display:inline-flex; align-items:center; justify-content:center;
-      border:2px solid #e5e7eb; background:white; border-radius:1rem; padding:.3rem .8rem;
-      font-weight:600; font-size:1.125rem; cursor:pointer; transition:.16s}
+    .chip{min-width:72px; min-height:52px; display:inline-flex; align-items:center; justify-content:center;
+      border:2px solid #e5e7eb; background:white; border-radius:1rem; padding:.35rem .9rem;
+      font-weight:600; font-size:1.0625rem; cursor:pointer; transition:.16s}
     .chip:hover{transform:translateY(-2px)}
     .chip.selected{border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.20)}
 
-    .answer-item{position:relative;transition:transform .14s,box-shadow .14s,border-color .14s;cursor:pointer;user-select:none;
-      -webkit-user-select:none;-webkit-tap-highlight-color:transparent;background:rgba(255,255,255,.96);border-radius:1rem;border:2px solid transparent;outline:none; min-height:88px}
+    .answer-item{
+      position:relative;transition:transform .14s,box-shadow .14s,border-color .14s;cursor:pointer;user-select:none;
+      -webkit-user-select:none;-webkit-tap-highlight-color:transparent;background:rgba(255,255,255,.96);
+      border-radius:1rem;border:2px solid transparent;outline:none; min-height:88px
+    }
     .answer-item:active{transform:scale(.98)}
     .answer-item.selected{border-color:#2563eb;box-shadow:0 12px 30px rgba(0,0,0,.18)}
 
-    .link-cta{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;margin:.5rem auto 1rem;font-weight:700;font-size:1rem;
+    .link-cta{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;margin:.5rem auto 1rem;font-weight:600;font-size:1rem;
       color:#111827;text-decoration:underline;cursor:pointer;background:transparent;border:none;padding:.25rem .5rem;border-radius:.5rem}
 
-    .subhead{font-weight:700;font-size:clamp(1.2rem, 1rem + 1vw, 1.5rem); line-height:1.25; color:#1f2937; letter-spacing:-.01em}
+    .subhead{font-weight:600;font-size:clamp(1.05rem, .95rem + 1vw, 1.35rem); line-height:1.3; color:#1f2937; letter-spacing:-.01em}
 
     .site-signature{ text-align:center;color:#6b7280;font-size:.95rem;line-height:1.6; margin-top:1.5rem;margin-bottom:1.5rem }
     .site-signature a{color:#4b5563;text-decoration:underline}
@@ -50,7 +55,7 @@
 
     /* Floating controls */
     #floatingControls{position:fixed; left:16px; top:16px; z-index:50; display:flex; flex-direction:column; gap:10px;}
-    #audioToggle,#profileBtn{padding:.5rem .7rem;border-radius:9999px;background:rgba(255,255,255,.95);border:1px solid #e5e7eb;box-shadow:0 6px 20px rgba(0,0,0,.12); font-size:20px}
+    #audioToggle,#profileBtn{padding:.55rem .75rem;border-radius:9999px;background:rgba(255,255,255,.95);border:1px solid #e5e7eb;box-shadow:0 6px 20px rgba(0,0,0,.12); font-size:20px}
 
     /* Overflow helpers */
     #topicsWrapper{position:relative}
@@ -74,9 +79,9 @@
   <div id="welcomeScreen" class="flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
       <div class="text-6xl mb-4 owl-blink">🦉</div>
-      <h1 id="welcomeTitle" tabindex="-1" class="no-focus-outline text-4xl font-bold text-purple-600 mb-4">מדעונצ'יק</h1>
-      <p class="text-2xl text-gray-700 mb-8">שופי הינשוף מחכה לכם לחידון מדע כיפי</p>
-      <button type="button" id="startBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-200 shadow-lg">התחל</button>
+      <h1 id="welcomeTitle" tabindex="-1" class="no-focus-outline text-4xl font-semibold text-purple-600 mb-4">מדעונצ'יק</h1>
+      <p class="text-xl text-gray-700 mb-8">שופי הינשוף מזמין אתכם לחידון מדע כיפי ומאתגר</p>
+      <button type="button" id="startBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">התחל</button>
     </div>
     <footer class="site-signature px-4" id="globalSignature">
       <div>© 2025 yaroni studio - תוכן חזק, עובד חכם ומבוסס על בינה</div>
@@ -88,34 +93,34 @@
   <div id="nameScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <form id="nameForm" class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
       <div class="text-5xl mb-4">👋</div>
-      <h2 id="nameTitle" tabindex="-1" class="no-focus-outline text-3xl font-bold text-blue-600 mb-2">איך קוראים לך?</h2>
+      <h2 id="nameTitle" tabindex="-1" class="no-focus-outline text-3xl font-semibold text-blue-600 mb-2">איך קוראים לך?</h2>
       <p id="nameSubtitle" class="text-gray-600 mb-4 hidden"></p>
-      <input type="text" id="playerName" name="playerName" required placeholder="הכנס את שמך כאן" class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl mb-3 text-center focus:border-blue-500 focus:outline-none">
+      <input type="text" id="playerName" name="playerName" required placeholder="כתבו כאן את השם שלכם" class="w-full p-4 text-lg border-2 border-gray-300 rounded-xl mb-3 text-center focus:border-blue-500 focus:outline-none">
       <div class="text-center mb-6">
-        <button type="button" id="profileOrSwitchBtn" class="link-cta">החלף משתמש - אזור אישי</button>
+        <button type="button" id="profileOrSwitchBtn" class="link-cta">החלפת משתמש / אזור אישי</button>
       </div>
-      <button type="submit" class="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:from-blue-600 hover:to-green-600 transform hover:scale-105 transition-all duration-200 shadow-lg">המשך</button>
+      <button type="submit" class="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:from-blue-600 hover:to-green-600 transform hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">המשך</button>
     </form>
   </div>
 
   <!-- User Picker -->
   <div id="userPickerModal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
     <div role="dialog" aria-modal="true" class="bg-white rounded-2xl max-w-md w-full p-6">
-      <h3 class="text-2xl font-bold text-gray-800 mb-3">בחרו משתמש</h3>
+      <h3 class="text-2xl font-semibold text-gray-800 mb-3">בחרו משתמש</h3>
       <div id="userList" class="space-y-2 max-h-[50vh] overflow-auto mb-4"></div>
       <div class="flex gap-2 justify-between">
-        <button id="userPickerCancel" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold">סגור</button>
-        <button id="newUserBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700">משתמש חדש</button>
+        <button id="userPickerCancel" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold min-h-[44px]">סגור</button>
+        <button id="newUserBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 min-h-[44px]">משתמש חדש</button>
       </div>
     </div>
   </div>
 
-  <!-- Topics -->
+  <!-- Topics (בחירת נושא + כמות + רמה) -->
   <div id="topicsScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-4xl w-full">
       <div class="text-5xl mb-4">📚</div>
-      <h2 id="topicsTitle" tabindex="-1" class="no-focus-outline text-3xl md:text-4xl font-extrabold text-green-600 mb-2 leading-tight">איזה נושא מעניין אותך היום?</h2>
-      <p class="subhead mb-6">בחרו נושא אחד או יותר - ואז המשיכו</p>
+      <h2 id="topicsTitle" tabindex="-1" class="no-focus-outline text-3xl md:text-4xl font-semibold text-green-600 mb-2 leading-tight">איזה נושא מעניין אתכם היום?</h2>
+      <p class="subhead mb-6">בחרו נושא אחד או יותר, ואז המשיכו</p>
 
       <div id="topicsWrapper" class="relative mb-6">
         <div id="topicsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 topics-collapsed"></div>
@@ -142,8 +147,8 @@
       </div>
 
       <div class="flex items-center justify-center gap-3 flex-wrap mt-4">
-        <button id="topicsMore" type="button" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold hidden" aria-expanded="false">הצג עוד</button>
-        <button id="topicsNext" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg disabled:opacity-50" disabled aria-disabled="true">המשך</button>
+        <button id="topicsMore" type="button" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold hidden min-h-[44px]" aria-expanded="false">הצג עוד</button>
+        <button id="topicsNext" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-bold shadow-lg disabled:opacity-50 min-h-[52px]" disabled aria-disabled="true">המשך</button>
       </div>
     </div>
   </div>
@@ -152,8 +157,8 @@
   <div id="gameScreen" class="hidden min-h-screen p-4">
     <div class="bg-white rounded-2xl shadow-lg p-4 mb-6 mx-auto max-w-4xl">
       <div class="flex justify-between items-center mb-4 gap-3 flex-wrap">
-        <div class="text-2xl font-bold text-purple-600">שאלה <span id="currentQuestion" class="ltr">1</span> מתוך <span id="totalQuestions" class="ltr">6</span></div>
-        <div class="text-xl text-gray-600">שלום <span id="gamePlayerName"></span> - בהצלחה</div>
+        <div class="text-2xl font-semibold text-purple-600">שאלה <span id="currentQuestion" class="ltr">1</span> מתוך <span id="totalQuestions" class="ltr">6</span></div>
+        <div class="text-lg text-gray-700">שלום <span id="gamePlayerName" class="font-semibold"></span> — בהצלחה!</div>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-4" aria-hidden="true">
         <div id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" class="bg-gradient-to-r from-green-400 to-blue-500 h-4 rounded-full" style="width: 0%"></div>
@@ -163,30 +168,30 @@
 
     <div class="bg-white rounded-3xl shadow-2xl p-6 mb-6 mx-auto max-w-lg text-center">
       <div class="text-5xl mb-4 owl-blink">🦉</div>
-      <div id="questionText" tabindex="-1" class="no-focus-outline text-3xl font-bold text-gray-800 mb-6">טוען שאלה...</div>
-      <div class="subhead text-gray-700 mb-4">בחרו את התשובה הנכונה</div>
+      <div id="questionText" tabindex="-1" class="no-focus-outline text-2xl md:text-3xl font-semibold text-gray-800 mb-4">טוען שאלה...</div>
+      <div class="subhead text-gray-700 mb-2">בחרו את התשובה הנכונה</div>
     </div>
 
     <div id="answersGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto px-4 mb-2"></div>
 
     <div class="max-w-lg mx-auto px-4 mb-6">
       <div id="hintBox" class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 text-right hidden">
-        <div class="font-bold text-blue-600 mb-1">רמז של שופי</div>
+        <div class="font-semibold text-blue-700 mb-1">רמז של שופי</div>
         <div id="hintBody" class="text-gray-700"></div>
       </div>
     </div>
 
     <div class="text-center space-y-4 pb-6">
-      <button id="confirmButton" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-xl font-bold transition-all duration-200 shadow-lg" disabled aria-disabled="true">אשר תשובה</button>
-      <button type="button" id="restartBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-full text-lg font-bold hover:scale-105 transition-all duration-200 shadow-lg">התחל מחדש</button>
+      <button id="confirmButton" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-bold transition-all duration-200 shadow-lg min-h-[52px]" disabled aria-disabled="true">אשר תשובה</button>
+      <button type="button" id="restartBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-full text-base font-semibold hover:scale-105 transition-all duration-200 shadow-lg min-h-[48px]">התחל מחדש</button>
     </div>
 
     <!-- End-of-set Feedback -->
     <div id="feedback" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div role="dialog" aria-modal="true" aria-labelledby="feedbackText" class="bg-white rounded-3xl p-8 text-center max-w-md mx-4">
-        <div id="feedbackIcon" class="text-8xl mb-4">🎉</div>
-        <div id="feedbackText" aria-live="polite" class="text-2xl font-bold mb-6">סיימנו את הסט - מעולה</div>
-        <button id="nextButton" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:scale-105 transition-all duration-200 shadow-lg">לסיכום התוצאות</button>
+        <div id="feedbackIcon" class="text-7xl mb-4">🎉</div>
+        <div id="feedbackText" aria-live="polite" class="text-2xl font-semibold mb-6">סיימנו את הסט — כל הכבוד!</div>
+        <button id="nextButton" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">לסיכום התוצאות</button>
       </div>
     </div>
   </div>
@@ -194,12 +199,12 @@
   <!-- Results -->
   <div id="resultsScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full relative overflow-hidden">
-      <div class="text-8xl mb-4">🏆</div>
-      <h2 id="resultsTitle" tabindex="-1" class="no-focus-outline text-3xl font-bold text-green-600 mb-4">כל הכבוד</h2>
+      <div class="text-7xl mb-4">🏆</div>
+      <h2 id="resultsTitle" tabindex="-1" class="no-focus-outline text-3xl font-semibold text-green-600 mb-4">כל הכבוד</h2>
       <div class="mb-6">
         <div class="flex justify-between items-center mb-2">
           <span class="text-sm font-medium text-gray-600">הביצועים שלך:</span>
-          <span id="performancePercentage" class="text-sm font-bold text-blue-600 ltr">0%</span>
+          <span id="performancePercentage" class="text-sm font-semibold text-blue-600 ltr">0%</span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
           <div id="performanceBar" class="h-6 rounded-full transition-all duration-1000 flex" aria-label="Progress indicator">
@@ -212,15 +217,16 @@
           <span class="text-orange-600 font-medium">✗ שגויות: <span id="incorrectCount" class="ltr">0</span></span>
         </div>
       </div>
-      <div class="text-xl text-gray-700 mb-6">
-        <div id="performanceMessage" class="mb-4 font-medium text-lg">סיימת את הסט - יפה</div>
-        <div class="mb-2">תשובות נכונות: <span id="correctAnswers" class="font-bold text-green-600 ltr">0</span>/<span id="resultsTotal" class="ltr">6</span></div>
-        <div class="mb-4">זמן ממוצע: <span id="averageTime" class="font-bold text-blue-600 ltr">0</span> שניות</div>
+      <div class="text-base text-gray-700 mb-6">
+        <div id="performanceMessage" class="mb-3 font-medium">סיימתם את הסט — יפה!</div>
+        <div class="mb-1">תשובות נכונות: <span id="correctAnswers" class="font-semibold text-green-600 ltr">0</span>/<span id="resultsTotal" class="ltr">6</span></div>
+        <div class="mb-3">זמן ממוצע לשאלה: <span id="averageTime" class="font-semibold text-blue-600 ltr">0</span> שניות</div>
       </div>
-      <div class="flex flex-col gap-4">
-        <button id="retryBtn" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:scale-105 transition-all duration-200 shadow-lg">אני רוצה סט חדש</button>
-        <button id="altBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-xl font-bold hover:scale-105 transition-all duration-200 shadow-lg">בא לי נושא אחר</button>
-        <button id="profileFromResultsBtn" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full text-xl font-bold hover:scale-105 transition-all duration-200 shadow-lg">אזור אישי</button>
+      <div class="flex flex-col gap-3">
+        <button id="learnBtn" class="hidden bg-gradient-to-r from-amber-400 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">ללמוד מהטעויות</button>
+        <button id="retryBtn" class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">סט חדש באותו נושא</button>
+        <button id="altBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">בא לי נושא אחר</button>
+        <button id="profileFromResultsBtn" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-all duration-200 shadow-lg min-h-[52px]">אזור אישי</button>
       </div>
     </div>
     <footer class="site-signature px-4">
@@ -229,15 +235,30 @@
     </footer>
   </div>
 
+  <!-- Learn from Mistakes -->
+  <div id="mistakesScreen" class="hidden min-h-screen p-6">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-4xl mx-auto">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h2 class="text-3xl font-semibold text-orange-600">לומדים מהטעויות</h2>
+        <div class="flex gap-2">
+          <button id="mistakesBackBtn" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold min-h-[44px]">חזרה לסיכום</button>
+          <button id="mistakesNewBtn" class="px-4 py-2 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 min-h-[44px]">התחל משחק חדש</button>
+        </div>
+      </div>
+
+      <div id="mistakesList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+  </div>
+
   <!-- Profile -->
   <div id="profileScreen" class="hidden min-h-screen p-6">
     <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-4xl mx-auto">
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h2 class="text-3xl font-bold text-indigo-600">האזור האישי</h2>
+        <h2 class="text-3xl font-semibold text-indigo-600">האזור האישי</h2>
         <div class="flex gap-2">
-          <button id="profileStartBtn" class="px-4 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700">התחל משחק</button>
-          <button id="profileSwitchBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700">החלף משתמש</button>
-          <button id="profileNewBtn" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-bold">משתמש חדש</button>
+          <button id="profileStartBtn" class="px-4 py-2 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 min-h-[44px]">התחל משחק</button>
+          <button id="profileSwitchBtn" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 min-h-[44px]">החלף משתמש</button>
+          <button id="profileNewBtn" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold min-h-[44px]">משתמש חדש</button>
         </div>
       </div>
 
@@ -246,22 +267,22 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div class="p-4 rounded-2xl border-2 border-green-200 bg-green-50">
           <div class="text-sm text-green-700">סטים שבוצעו</div>
-          <div id="kpiSets" class="text-3xl font-extrabold text-gray-900 ltr">0</div>
+          <div id="kpiSets" class="text-3xl font-semibold text-gray-900 ltr">0</div>
         </div>
         <div class="p-4 rounded-2xl border-2 border-blue-200 bg-blue-50">
           <div class="text-sm text-blue-700">דיוק מצטבר</div>
-          <div id="kpiAccuracy" class="text-3xl font-extrabold text-gray-900 ltr">0%</div>
+          <div id="kpiAccuracy" class="text-3xl font-semibold text-gray-900 ltr">0%</div>
         </div>
         <div class="p-4 rounded-2xl border-2 border-purple-200 bg-purple-50">
           <div class="text-sm text-purple-700">זמן ממוצע לשאלה</div>
-          <div id="kpiAvg" class="text-3xl font-extrabold text-gray-900 ltr">0s</div>
+          <div id="kpiAvg" class="text-3xl font-semibold text-gray-900 ltr">0s</div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" id="byTopicGrid"></div>
 
       <div>
-        <h3 class="text-2xl font-bold text-gray-800 mb-3">היסטוריית סטים</h3>
+        <h3 class="text-2xl font-semibold text-gray-800 mb-3">היסטוריית סטים</h3>
         <div id="historyList" class="space-y-2"></div>
       </div>
     </div>
@@ -273,6 +294,7 @@
     let playerName = '', questionCount = 6;
     let currentQuestionIndex = 0, correctCount = 0, totalQuestions = 6;
     let questions = [], selectedAnswer = null, startTime = 0, totalTime = 0;
+    let wrongAnswers = [];
 
     const STORE_KEY='mdnc_profiles_v1';
     const RECENT_KEY='mdnc_recent_ids_v1';
@@ -329,10 +351,10 @@
     function unlockAudioOnce(){ if(audioUnlocked||isMuted) return; const ctx=getAudioCtx(); if(!ctx) return;
       try{ const buffer=ctx.createBuffer(1,1,ctx.sampleRate); const src=ctx.createBufferSource(); const gain=ctx.createGain(); gain.gain.value=0.0001; src.buffer=buffer; src.connect(gain); gain.connect(ctx.destination); src.start(0); setTimeout(()=>{ try{ src.disconnect(); gain.disconnect(); }catch{} audioUnlocked=true; },0); }catch{}
     }
-    function tone(freq,dur,t,type='sine',gain=0.24){ if(isMuted) return; const ctx=getAudioCtx(); if(!ctx) return; const start=typeof t==='number'?t:ctx.currentTime; const o=ctx.createOscillator(); const g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(freq,start); g.gain.setValueAtTime(gain,start); g.gain.exponentialRampToValueAtTime(0.001,start+dur); o.connect(g); g.connect(ctx.destination); try{ o.start(start); o.stop(start+dur); }catch{} }
-    function playSelectTick(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(520,0.10,t,'triangle',0.24); }
-    function playSuccessSound(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(523.25,0.12,t,'sine',0.22); tone(659.25,0.12,t+0.1,'sine',0.20); tone(783.99,0.14,t+0.2,'sine',0.18); }
-    function playErrorSound(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(220,0.12,t,'square',0.20); tone(180,0.12,t+0.1,'square',0.18); }
+    function tone(freq,dur,t,type='sine',gain=0.22){ if(isMuted) return; const ctx=getAudioCtx(); if(!ctx) return; const start=typeof t==='number'?t:ctx.currentTime; const o=ctx.createOscillator(); const g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(freq,start); g.gain.setValueAtTime(gain,start); g.gain.exponentialRampToValueAtTime(0.001,start+dur); o.connect(g); g.connect(ctx.destination); try{ o.start(start); o.stop(start+dur); }catch{} }
+    function playSelectTick(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(520,0.10,t,'triangle',0.22); }
+    function playSuccessSound(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(523.25,0.12,t,'sine',0.20); tone(659.25,0.12,t+0.1,'sine',0.18); tone(783.99,0.14,t+0.2,'sine',0.16); }
+    function playErrorSound(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(220,0.12,t,'square',0.18); tone(180,0.12,t+0.1,'square',0.16); }
     document.addEventListener('click',e=>{
       const el=e.target.closest('button,.choice-card,.chip,.answer-item');
       if(!el||el.id==='audioToggle') return;
@@ -340,7 +362,6 @@
       if(el.disabled||el.getAttribute('aria-disabled')==='true') return;
       if(wasLocked) setTimeout(playSelectTick,0); else playSelectTick();
     });
-    document.addEventListener('keydown',e=>{/* אין קיצורי מקלדת לבחירה לפי דרישה */});
     function initAudioToggle(){
       const btn=$('#audioToggle'); if(!btn) return;
       try{ isMuted=localStorage.getItem('mdnc_sound_muted')==='true'; }catch{ isMuted=false; }
@@ -361,9 +382,10 @@
       requestAnimationFrame(()=>{ window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); try{ target && target.focus({preventScroll:true}); }catch{} });
     }
     function updateStatus(msg){ const el=$('#statusMsg'); if(el) el.textContent=msg||''; }
+    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;', "'":'&#39;' }[m])); }
 
     /* ========= Screens ========= */
-    const SCREENS=['welcomeScreen','nameScreen','topicsScreen','gameScreen','resultsScreen','profileScreen'];
+    const SCREENS=['welcomeScreen','nameScreen','topicsScreen','gameScreen','resultsScreen','mistakesScreen','profileScreen'];
     function showScreen(id){ SCREENS.forEach(s=>$('#'+s)?.classList.add('hidden')); $('#'+id)?.classList.remove('hidden'); window.scrollTo({top:0,left:0,behavior:'auto'}); }
 
     /* ========= Topics & Bank ========= */
@@ -377,10 +399,10 @@
       {key:'energy', label:'אנרגיה וחום', emoji:'🔥'},
       {key:'space', label:'כדור הארץ והחלל', emoji:'🪐'},
       {key:'measure', label:'מדידות וכלים', emoji:'📏'},
-      {key:'magnet', label:'מגנטים', emoji:'🧲'},
+      {key:'magnet', label:'מגנטים', emoji:'🧲'}
     ];
 
-    // Seed Concepts: כל פריט מייצג "רעיון" עם 2-3 ניסוחים כדי להגיע ל-200+ וריאציות ללא חזרות זהות.
+    // Seed Concepts (ללא "מה דעתך?")
     const SEED = [
       // gravity
       {id:'grav_1', topic:'gravity', level:'easy', templates:[
@@ -394,11 +416,11 @@
       // motion
       {id:'mot_1', topic:'motion', level:'easy', templates:[
         'איזה כוח מאט תנועה על הקרקע?',
-        'מה גורם לחפץ לנוע פחות כשהוא מחליק?'
+        'מה גורם לחפץ להאט כשהוא מחליק?'
       ], choices:['חיכוך','כוח המשיכה','ציפה','חשמל'], correct:0, hint:'הכוח שמתנגד לתנועה נקרא חיכוך.'},
       {id:'mot_2', topic:'motion', level:'medium', templates:[
-        'כשמפסיקים לדחוף עגלה והיא מאטה - למה זה קורה?',
-        'עגלה נוסעת ונעצרת לבד - מה גרם לה לעצור?'
+        'עגלה נוסעת ונעצרת לבד — מה גרם לה לעצור?',
+        'כשמפסיקים לדחוף עגלה והיא מאטה — למה זה קורה?'
       ], choices:['חיכוך באוויר ובגלגלים','גרביטציה חלשה','חום השמש','אור חזק'], correct:0, hint:'החיכוך עם הקרקע והאוויר מוריד מהירות.'},
       // light
       {id:'light_1', topic:'light', level:'easy', templates:[
@@ -408,24 +430,24 @@
       {id:'light_2', topic:'light', level:'medium', templates:[
         'איזה צבע נשבר הכי הרבה במים?',
         'באיזה צבע האור מתכופף הכי הרבה במים?'
-      ], choices:['אדום','ירוק','כחול','סגול'], correct:3, hint:'קצה סגול של הקשת נשבר יותר.'},
+      ], choices:['אדום','ירוק','כחול','סגול'], correct:3, hint:'הקצה הסגול של הספקטרום נשבר יותר.'},
       // sound
       {id:'snd_1', topic:'sound', level:'easy', templates:[
-        'הגברת אמפליטודה בקול תגרום ל...',
-        'כשמעלים את עוצמת הצליל מה קורה?'
+        'כשמגבירים אמפליטודה בצליל, מה קורה?',
+        'העלאת עוצמת הקול תגרום ל...'
       ], choices:['צליל גבוה יותר','קול חזק יותר','מהירות משתנה','הכול יחד'], correct:1, hint:'אמפליטודה קשורה לעוצמה, לא לגובה הצליל.'},
       {id:'snd_2', topic:'sound', level:'medium', templates:[
-        'מה נדרש כדי שקול יעבור?',
-        'קול נע דרך...'
-      ], choices:['ריק מוחלט בלבד','חומר כמו אוויר או מים','רק מתכת','רק חוטים'], correct:1, hint:'קול הוא גל מכני וצריך תווך חומרי.'},
+        'דרך מה קול נע?',
+        'מה נדרש כדי שקול יעבור?'
+      ], choices:['ריק מוחלט','חומר כמו אוויר או מים','רק מתכת','רק חוטים'], correct:1, hint:'קול הוא גל מכני וצריך תווך חומרי.'},
       // electric
       {id:'elec_1', topic:'electric', level:'easy', templates:[
-        'במעגל סגור עם סוללה ונורה - מה יקרה?',
-        'כשסוגרים מעגל חשמלי עם סוללה ונורה...'
+        'במעגל סגור עם סוללה ונורה — מה יקרה?',
+        'כשסוגרים מעגל חשמלי עם סוללה ונורה, מה יקרה?'
       ], choices:['שום דבר','הנורה תדלק','הסוללה נעלמת','יהיה צליל'], correct:1, hint:'זרם עובר במעגל סגור והנורה נדלקת.'},
       {id:'elec_2', topic:'electric', level:'medium', templates:[
-        'כדי שהנורה תאיר במעגל - צריך...',
-        'מדוע נורה לא דולקת במעגל פתוח? חסר...'
+        'למה נורה לא דולקת במעגל פתוח?',
+        'כדי שהנורה תאיר במעגל — צריך...'
       ], choices:['כבל עבה','מעגל סגור','שתי סוללות','מתג חכם'], correct:1, hint:'הזרם זורם רק כשהמעגל סגור.'},
       // matter
       {id:'mat_1', topic:'matter', level:'easy', templates:[
@@ -435,11 +457,11 @@
       {id:'mat_2', topic:'matter', level:'medium', templates:[
         'מה קובע אם ספינה תצוף?',
         'למה ספינה כבדה לא שוקעת?'
-      ], choices:['משקל קטן','צפיפות נמוכה ממים','מנוע חזק','מגנטים'], correct:1, hint:'אם הצפיפות הממוצעת נמוכה מזו של מים - צפה.'},
+      ], choices:['משקל קטן','צפיפות נמוכה ממים','מנוע חזק','מגנטים'], correct:1, hint:'אם הצפיפות הממוצעת נמוכה מזו של מים — היא תצוף.'},
       // energy
       {id:'eng_1', topic:'energy', level:'easy', templates:[
         'איזו אנרגיה יש לתנועה?',
-        'כדור נע מחזיק אנרגיה מסוג...'
+        'כדור שנע מחזיק אנרגיה מסוג...'
       ], choices:['קינטית','חשמלית','תרמית','אלסטית'], correct:0, hint:'קינטית = אנרגיית תנועה.'},
       {id:'eng_2', topic:'energy', level:'medium', templates:[
         'איזו אנרגיה נאגרת בקפיץ דחוס?',
@@ -456,8 +478,8 @@
       ], choices:['השמש מחממת לא אחיד','הירח','מגנטים','רעש'], correct:0, hint:'הבדלי טמפרטורה ולחץ יוצרים רוחות.'},
       // measure
       {id:'msr_1', topic:'measure', level:'easy', templates:[
-        'איזו יחידה היא יחידת מסה בסיסית?',
-        'מהי יחידת המסה במערכת SI?'
+        'מהי יחידת המסה במערכת SI?',
+        'איזו יחידה היא יחידת מסה בסיסית?'
       ], choices:['ניוטון','קילוגרם','מטר','אמפר'], correct:1, hint:'קילוגרם הוא יחידת המסה.'},
       {id:'msr_2', topic:'measure', level:'medium', templates:[
         'באיזה כלי מודדים אורך שולחן?',
@@ -470,12 +492,12 @@
       ], choices:['מגנט','כוס מים','בלון','נייר'], correct:0, hint:'מגנט מושך ברזל וחומרים מגנטיים.'},
       {id:'mag_2', topic:'magnet', level:'medium', templates:[
         'קוטבי מגנט זהים יגרמו ל...',
-        'כששמים N מול N במגנטים...'
+        'כששמים N מול N במגנטים, נרגיש...'
       ], choices:['משיכה','דחייה','שום דבר','התחממות'], correct:1, hint:'זהה דוחה זהה, שונה מושך.'},
-      // עוד רעיונות בסיסיים להרחבה ל-200+ בוריאציות:
+      // הרחבות
       {id:'air_1', topic:'motion', level:'easy', templates:[
         'מה גורם למצנח להאט נפילה?',
-        'למה קפיצה עם מצנח איטית יותר?'
+        'למה צניחה עם מצנח איטית יותר?'
       ], choices:['גרר אוויר','מנוע','מגנט','ציפה'], correct:0, hint:'שטח גדול מגדיל גרר ומאט.'},
       {id:'liq_1', topic:'matter', level:'easy', templates:[
         'איזה מצב צבירה לענן?',
@@ -484,10 +506,10 @@
       {id:'fl_1', topic:'energy', level:'medium', templates:[
         'מה קורה לגז כשמחממים אותו?',
         'חימום אוויר יגרום לנפח...'
-      ], choices:['להתכווץ','להתרחב','להיעלם','להפוך למים'], correct:1, hint:'חימום מגדיל אנרגיה ומרחיב גז.'},
+      ], choices:['להתכווץ','להתרחב','להיעלם','להפוך למים'], correct:1, hint:'חימום מגדיל אנרגיה ומרחיב גז.'}
     ];
 
-    // הרחבת וריאציות כדי לעבור 200 אפשריות
+    // יצירת וריאציות רבות לכל תבנית
     function expandBank(seed){
       const out=[];
       seed.forEach(s=>{
@@ -501,19 +523,20 @@
             q: qtxt,
             choices: s.choices.slice(),
             correct: s.correct,
-            hint: s.hint || '',
+            hint: s.hint || ''
           });
         });
       });
-      // יצירת וריאציות קלות נוספות ע"י שינויים קטנים בבחירה-נוסח
-      // (נזהר לא לשנות עובדות)
-      const dup = [];
+      // וריאציה קלה של ניסוח ידידותי (בלי לשנות עובדה)
+      const friendly = [];
       out.forEach(item=>{
-        if(item.q.endsWith('?')){
-          dup.push({...item, id:item.id+'_p', q:item.q.replace('?',' - מה דעתך?')});
-        }
+        friendly.push({
+          ...item,
+          id: item.id + '_f',
+          q: item.q.replace('למה','מדוע').replace('מה ','מה ')
+        });
       });
-      return out.concat(dup); // מספיק לעבור 200 יחד עם ההרחבה
+      return out.concat(friendly); // מספיק לכמות גדולה ולמניעת חזרות
     }
     const BIG_BANK = expandBank(SEED);
 
@@ -523,7 +546,7 @@
     function pushRecentIds(ids){
       try{
         const cur=getRecentIds();
-        const merged=[...ids, ...cur].slice(0, 120); // זכרון קצר טווח
+        const merged=[...ids, ...cur].slice(0, 160); // זכרון קצר טווח
         sessionStorage.setItem(RECENT_KEY, JSON.stringify(merged));
       }catch{}
     }
@@ -532,7 +555,6 @@
       return bank.filter(q => topics.has(q.topic) && (diff ? q.level===diff : true));
     }
     function siblingTopics(t){
-      // שכנות גמישה - קבוצות טבעיות
       const groups = [
         ['motion','gravity','magnet'],
         ['light','sound'],
@@ -544,31 +566,28 @@
     }
     function buildPoolWithFallback(requiredCount, topicsSel, diff){
       let pool = [];
-      // 1. בדיוק הנושאים שנבחרו
-      const bySel = filterByTopicsAndDiff(BIG_BANK, topicsSel, diff);
-      pool = pool.concat(bySel);
+      // 1) בדיוק הנושאים שנבחרו
+      pool = pool.concat(filterByTopicsAndDiff(BIG_BANK, topicsSel, diff));
 
-      // 2. אם חסר - השכנים של כל נושא שנבחר
+      // 2) אם חסר — שכנים של כל נושא שנבחר
       if(pool.length < requiredCount){
         const near = new Set();
         topicsSel.forEach(t => siblingTopics(t).forEach(n=>near.add(n)));
-        const nearPool = BIG_BANK.filter(q => near.has(q.topic) && (diff ? q.level===diff : true));
-        pool = pool.concat(nearPool);
+        pool = pool.concat(BIG_BANK.filter(q => near.has(q.topic) && (diff ? q.level===diff : true)));
       }
 
-      // 3. עדיין חסר - כל הנושאים ברמת קושי
+      // 3) אם עדיין חסר — כל הנושאים ברמת הקושי
       if(pool.length < requiredCount){
         pool = pool.concat(BIG_BANK.filter(q => diff ? q.level===diff : true));
       }
 
-      // 4. כניסה אחרונה - רמה סמוכה (רק אם חייבים)
+      // 4) אחרון — רמות סמוכות
       if(pool.length < requiredCount){
         const alt = diff==='easy'?['medium'] : diff==='hard'?['medium'] : ['easy','hard'];
-        const altPool = BIG_BANK.filter(q => alt.includes(q.level));
-        pool = pool.concat(altPool);
+        pool = pool.concat(BIG_BANK.filter(q => alt.includes(q.level)));
       }
 
-      // דה-דופ לפי conceptId כדי לא לקבל אותו רעיון פעמיים
+      // דה-דופ לפי conceptId
       const seenConcept=new Set(); const unique=[];
       shuffle(pool).forEach(q=>{
         if(!seenConcept.has(q.conceptId)){ seenConcept.add(q.conceptId); unique.push(q); }
@@ -578,7 +597,7 @@
 
     function buildUniqueSet(requiredCount, topicsSel, diff){
       const recent = new Set(getRecentIds());
-      const pool = buildPoolWithFallback(requiredCount*4, topicsSel, diff); // באפר גדול
+      const pool = buildPoolWithFallback(requiredCount*4, topicsSel, diff); // באפר
       const selected = [];
       const usedConcept = new Set();
 
@@ -590,7 +609,7 @@
         usedConcept.add(q.conceptId);
       }
 
-      // אם עדיין חסר - הרשה שימוש ברעיונות שהיו לאחרונה, אבל לא כפילות בתוך הסט
+      // אם עדיין חסר — אפשר רעיונות שהיו לאחרונה (אבל לא כפילות בתוך הסט)
       if(selected.length < requiredCount){
         for(const q of pool){
           if(selected.length >= requiredCount) break;
@@ -600,10 +619,8 @@
         }
       }
 
-      // QA קשוח: בדיוק N וייחודי
+      // חירום: ודא בדיוק N
       if(selected.length < requiredCount){
-        alert('אין מספיק שאלות לסט שביקשת. נסה לבחור נושאים נוספים.');
-        // כגיבוי חירום - מלא מכל הבנק בלי כפילויות
         const rest = [];
         const seen = new Set(selected.map(x=>x.conceptId));
         for(const q of BIG_BANK){
@@ -622,7 +639,7 @@
         const b=document.createElement('button');
         b.type='button'; b.className='choice-card'; b.setAttribute('data-topic', t.key);
         b.setAttribute('aria-pressed','false');
-        b.innerHTML = `<div class="emoji">${t.emoji}</div><div class="text-xl font-bold text-gray-800">${t.label}</div>`;
+        b.innerHTML = `<div class="emoji">${t.emoji}</div><div class="text-lg font-semibold text-gray-800">${t.label}</div>`;
         b.addEventListener('click', ()=>{
           const k=t.key;
           if(selectedTopics.has(k)){ selectedTopics.delete(k); b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); }
@@ -653,20 +670,21 @@
       const ready = selectedTopics.size>0 && !!selectedCount && !!selectedDifficulty;
       const nextBtn=$('#topicsNext');
       nextBtn.disabled=!ready; nextBtn.setAttribute('aria-disabled', ready?'false':'true');
-      $('#topicsHelper').textContent = ready ? 'אפשר להמשיך' : 'כדי להמשיך צריך לבחור נושא, כמות ורמת קושי';
+      $('#topicsHelper').textContent = ready ? 'מצוין! אפשר להמשיך' : 'כדי להמשיך צריך לבחור נושא, כמות ורמת קושי';
     }
 
     /* ========= Game Flow ========= */
     function startGame(){
       const prof=getActiveProfile(); playerName = prof ? prof.name : playerName;
       totalQuestions = selectedCount || 6; questionCount = totalQuestions;
+      wrongAnswers = [];
       questions = buildUniqueSet(totalQuestions, selectedTopics, selectedDifficulty);
-      // QA מיידי
-      if(questions.length !== totalQuestions){ console.warn('QA: length mismatch fixed', questions.length, totalQuestions); }
+
       $('#totalQuestions').textContent=String(totalQuestions);
       $('#gamePlayerName').textContent=playerName;
       currentQuestionIndex=0; correctCount=0; selectedAnswer=null; totalTime=0;
-      showScreen('gameScreen'); showQuestion(); focusTop('#questionText'); updateStatus('יצאנו לדרך - בחרו תשובה ואז אשרו');
+
+      showScreen('gameScreen'); showQuestion(); focusTop('#questionText'); updateStatus('יצאנו לדרך — בחרו תשובה ואז אשרו');
     }
     function showQuestion(){
       if(currentQuestionIndex>=questions.length){ showResultsWithModal(); return; }
@@ -675,20 +693,23 @@
       $('#questionText').textContent=q.q;
       $('#currentQuestion').textContent=currentQuestionIndex+1;
 
-      const prog=(currentQuestionIndex/totalQuestions)*100; const pb=$('#progressBar');
-      const p=Math.max(2,Math.round(prog)); pb.style.width=p+'%'; pb.setAttribute('aria-valuenow',String(p));
+      // פרוגרס לפי כמה שאלות נסגרו (לפני אישור השאלה הנוכחית)
+      const prog=Math.round((currentQuestionIndex/totalQuestions)*100);
+      const pb=$('#progressBar'); pb.style.width=prog+'%'; pb.setAttribute('aria-valuenow',String(prog));
 
       const grid=$('#answersGrid'); grid.innerHTML='';
       const options = shuffle(q.choices.map((txt,i)=>({txt,i})));
-      options.forEach((opt,i)=>{
-        const d=document.createElement('div'); d.className='answer-item shadow-lg flex items-center justify-center p-4'; d.setAttribute('data-value',String(opt.i)); d.setAttribute('tabindex','0'); d.setAttribute('role','button'); d.setAttribute('aria-selected','false');
-        d.innerHTML = `<div class="text-2xl font-semibold text-gray-900 tracking-tight ltr tabular-nums">${opt.txt}</div>`;
-        d.addEventListener('click', ()=> chooseAnswer(d, opt.i));
-        d.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); chooseAnswer(d, opt.i);} });
+      options.forEach((opt)=>{
+        const d=document.createElement('div');
+        d.className='answer-item shadow-lg flex items-center justify-center p-4';
+        d.setAttribute('data-value',String(opt.i));
+        d.setAttribute('role','button'); d.setAttribute('aria-selected','false');
+        d.innerHTML = `<div class="text-xl font-semibold text-gray-900 tracking-tight ltr tabular-nums text-center">${opt.txt}</div>`;
+        d.addEventListener('click', ()=> chooseAnswer(d, opt.i)); // בחירת תשובה רק במגע/עכבר
         grid.appendChild(d);
       });
 
-      // רמזים - מוסתרים עד שגיאה או לחיצה
+      // רמזים — מוסתרים עד טעות
       $('#hintBox').classList.add('hidden'); $('#hintBody').textContent='';
       disableConfirm();
       startTime=Date.now();
@@ -699,8 +720,8 @@
       selectedAnswer=idx;
       enableConfirm(); playSelectTick();
     }
-    function enableConfirm(){ const btn=$('#confirmButton'); btn.disabled=false; btn.removeAttribute('disabled'); btn.setAttribute('aria-disabled','false'); }
-    function disableConfirm(){ const btn=$('#confirmButton'); btn.disabled=true; btn.setAttribute('disabled',''); btn.setAttribute('aria-disabled','true'); }
+    function enableConfirm(){ const btn=$('#confirmButton'); btn.disabled=false; btn.setAttribute('aria-disabled','false'); }
+    function disableConfirm(){ const btn=$('#confirmButton'); btn.disabled=true; btn.setAttribute('aria-disabled','true'); }
 
     $('#confirmButton').addEventListener('click', ()=>{
       if(selectedAnswer===null) return;
@@ -708,8 +729,19 @@
       const end=Date.now(); totalTime+=Math.max(0,(end-startTime)/1000);
 
       const correctIndex = q.correct;
-      if(selectedAnswer===correctIndex){ correctCount++; playSuccessSound(); updateStatus('כל הכבוד - ממשיכים'); }
-      else{ playErrorSound(); showHintFor(q); updateStatus('כמעט - קבלו רמז ונסו שוב בשאלה הבאה'); }
+      if(selectedAnswer===correctIndex){ correctCount++; playSuccessSound(); updateStatus('כל הכבוד — ממשיכים'); }
+      else{
+        playErrorSound();
+        showHintFor(q);
+        wrongAnswers.push({
+          qText: q.q,
+          choices: q.choices.slice(),
+          picked: selectedAnswer,
+          correct: correctIndex,
+          hint: q.hint || ''
+        });
+        updateStatus('כמעט — קבלו רמז וננסה שוב בשאלה הבאה');
+      }
 
       if(currentQuestionIndex===totalQuestions-1){ showResultsWithModal(); }
       else{ currentQuestionIndex++; showQuestion(); }
@@ -717,16 +749,19 @@
 
     function showHintFor(q){
       const box=$('#hintBox'), body=$('#hintBody');
-      body.textContent = q.hint ? q.hint : 'שופי מציע לחשוב לאט ולבדוק שוב.';
-      box.classList.remove('hidden'); // נשאר גלוי עד השאלה הבאה
+      body.textContent = q.hint ? q.hint : 'שופי מציע לחשוב רגע ולבדוק שוב.';
+      box.classList.remove('hidden'); // נשאר עד השאלה הבאה
     }
 
     function showResultsWithModal(){
+      // סגור את התקדמות ל-100% באופן ויזואלי
+      $('#progressBar').style.width='100%'; $('#progressBar').setAttribute('aria-valuenow','100');
+
       const fb=$('#feedback'), icon=$('#feedbackIcon'), text=$('#feedbackText'), nextBtn=$('#nextButton');
       const pct=Math.round((correctCount/totalQuestions)*100);
-      if(pct===100){ icon.textContent='👏'; text.className='text-2xl font-bold mb-6 text-green-600'; text.textContent='מדהים - סיימנו את הסט'; }
-      else if(pct>=60){ icon.textContent='👏'; text.className='text-2xl font-bold mb-6 text-blue-600'; text.textContent='יפה - סיימנו את הסט'; }
-      else{ icon.textContent='💪'; text.className='text-2xl font-bold mb-6 text-orange-600'; text.textContent='סיימנו את הסט'; }
+      if(pct===100){ icon.textContent='👏'; text.className='text-2xl font-semibold mb-6 text-green-600'; text.textContent='מדהים — סיימנו את הסט!'; }
+      else if(pct>=60){ icon.textContent='👏'; text.className='text-2xl font-semibold mb-6 text-blue-600'; text.textContent='יפה — סיימנו את הסט!'; }
+      else{ icon.textContent='💪'; text.className='text-2xl font-semibold mb-6 text-orange-600'; text.textContent='סיימנו את הסט — כל צעד הוא התקדמות'; }
       nextBtn.onclick=()=>{ $('#feedback').classList.add('hidden'); showResults(); };
       fb.classList.remove('hidden');
       trapDialog('#feedback');
@@ -745,6 +780,11 @@
       $('#resultsTotal').textContent=String(totalQuestions);
       $('#averageTime').textContent=String(Math.max(1,Math.round(totalTime/totalQuestions)));
 
+      // כפתור "ללמוד מהטעויות"
+      const learnBtn=$('#learnBtn');
+      if(incorrect>0){ learnBtn.classList.remove('hidden'); }
+      else{ learnBtn.classList.add('hidden'); }
+
       // לוג פרופיל
       const topicsSummary=[...selectedTopics];
       logSessionToProfile(topicsSummary);
@@ -755,10 +795,10 @@
     }
     function getResultsTitleCopy(name,pct){
       if(pct===0) return `לא נורא ${name}, ננסה שוב ונשתפר`;
-      else if(pct<=59) return `${name} רואים שיפור - ממשיכים לתרגל`;
-      else if(pct<=79) return `${name} עבודה יפה - המשך תרגול יביא שליטה`;
-      else if(pct<=89) return `ואוו ${name}, איזו שליטה`;
-      return `כל הכבוד ${name} שופי גאה בך`;
+      else if(pct<=59) return `${name} רואים התקדמות — ממשיכים לתרגל`;
+      else if(pct<=79) return `${name} עבודה יפה — עוד קצת ונהיה אלופים`;
+      else if(pct<=89) return `וואו ${name}, שליטה מרשימה`;
+      return `כל הכבוד ${name}, שופי גאה בך`;
     }
     function updatePerformanceBar(correct,incorrect,pct){
       $('#correctBar').style.width=(correct/totalQuestions*100)+'%';
@@ -766,6 +806,36 @@
       $('#performancePercentage').textContent=pct+'%';
       $('#correctCount').textContent=String(correct);
       $('#incorrectCount').textContent=String(incorrect);
+    }
+
+    /* ========= Learn From Mistakes ========= */
+    function renderMistakes(){
+      const list=$('#mistakesList'); list.innerHTML='';
+      if(!wrongAnswers.length){
+        list.innerHTML='<div class="p-4 rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-600">אין טעויות להציג — כל הכבוד!</div>';
+        return;
+      }
+      wrongAnswers.forEach((item,idx)=>{
+        const card=document.createElement('div');
+        card.className='p-4 rounded-2xl border-2 border-orange-200 bg-orange-50';
+        const your=item.choices[item.picked];
+        const correct=item.choices[item.correct];
+        const expId='exp_'+idx;
+        card.innerHTML=`
+          <div class="font-semibold text-gray-800 mb-2">${escapeHtml(item.qText)}</div>
+          <div class="text-sm text-gray-700 mb-1">התשובה שבחרתם: <span class="text-orange-700 font-semibold">${escapeHtml(your)}</span></div>
+          <div class="text-sm text-gray-700 mb-2">התשובה הנכונה: <span class="text-green-700 font-semibold">${escapeHtml(correct)}</span></div>
+          <button data-exp="${expId}" class="px-3 py-2 rounded-lg bg-white border-2 border-gray-200 hover:bg-gray-100 font-semibold text-sm">הסבר</button>
+          <div id="${expId}" class="hidden mt-2 text-gray-700 bg-white/60 border border-gray-200 rounded-lg p-3">${escapeHtml(item.hint || 'שופי: חשבו על הרעיון המרכזי ובדקו שוב.')}</div>
+        `;
+        list.appendChild(card);
+      });
+      list.querySelectorAll('button[data-exp]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id=btn.getAttribute('data-exp'); const box=document.getElementById(id);
+          if(!box) return; box.classList.toggle('hidden');
+        });
+      });
     }
 
     /* ========= Modals Trap ========= */
@@ -796,7 +866,7 @@
         $('#byTopicGrid').innerHTML=''; $('#historyList').innerHTML='<div class="p-4 rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-600">אין היסטוריית סטים עדיין.</div>';
         return;
       }
-      header.innerHTML=`משתמש פעיל: <span class="font-bold text-gray-900">${escapeHtml(prof.name)}</span>`;
+      header.innerHTML=`משתמש פעיל: <span class="font-semibold text-gray-900">${escapeHtml(prof.name)}</span>`;
       const tot=prof.totals||{sets:0,questions:0,correct:0,timeSec:0};
       const acc=tot.questions>0?Math.round((tot.correct/tot.questions)*100):0;
       const avg=tot.questions>0?Math.round(tot.timeSec/tot.questions):0;
@@ -810,7 +880,7 @@
         const a=b.questions?Math.round(b.correct/b.questions*100):0;
         const card=document.createElement('div');
         card.className='p-4 rounded-2xl border-2 border-gray-200 bg-gray-50';
-        card.innerHTML=`<div class="font-bold mb-2">${t.emoji} ${t.label}</div>
+        card.innerHTML=`<div class="font-semibold mb-2">${t.emoji} ${t.label}</div>
           <div class="text-sm text-gray-600 mb-1">סטים: <span class="ltr">${b.sets||0}</span></div>
           <div class="text-sm text-gray-600 mb-1">דיוק: <span class="ltr">${a}%</span></div>
           <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden"><div style="width:${a}%" class="h-2 bg-blue-500"></div></div>`;
@@ -828,22 +898,20 @@
           const date=new Date(item.ts).toLocaleString('he-IL',{dateStyle:'short', timeStyle:'short'});
           row.innerHTML=`<div>
               <div class="text-sm text-gray-500">${date}</div>
-              <div class="text-gray-800">${item.topics.map(k=> Topics.find(t=>t.key===k)?.label || k).join(' - ')}</div>
-              <div class="text-sm text-gray-500">רמה: ${item.diff} - שאלות: ${item.count}</div>
+              <div class="text-gray-800">${item.topics.map(k=> Topics.find(t=>t.key===k)?.label || k).join(' · ')}</div>
+              <div class="text-sm text-gray-500">רמה: ${item.diff} · שאלות: ${item.count}</div>
             </div>
             <div class="text-right">
-              <div class="text-xl font-extrabold ${pct===100?'text-green-600': pct>=60?'text-blue-600':'text-orange-600'} ltr">${pct}%</div>
+              <div class="text-xl font-semibold ${pct===100?'text-green-600': pct>=60?'text-blue-600':'text-orange-600'} ltr">${pct}%</div>
             </div>`;
           list.appendChild(row);
         });
       }
     }
-    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
 
     /* ========= Wiring ========= */
     function bindUI(){
       window.addEventListener('touchstart', unlockAudioOnce, { once:true, passive:true });
-      window.addEventListener('touchend',   unlockAudioOnce, { once:true, passive:true });
       window.addEventListener('pointerdown',unlockAudioOnce, { once:true, capture:true });
       window.addEventListener('click',      unlockAudioOnce, { once:true, capture:true });
 
@@ -891,12 +959,16 @@
       $('#retryBtn')?.addEventListener('click',()=> startGame());
       $('#altBtn')?.addEventListener('click',()=> showTopics());
 
-      bindAnswerGrid(); // סימון תשובה - כבר מוגדר בתוך showQuestion באמצעות addEventListener
+      $('#learnBtn')?.addEventListener('click',()=>{
+        renderMistakes();
+        showScreen('mistakesScreen');
+      });
+      $('#mistakesBackBtn')?.addEventListener('click',()=> showResults());
+      $('#mistakesNewBtn')?.addEventListener('click',()=> showTopics());
 
       initAudioToggle();
     }
 
-    function bindAnswerGrid(){ /* מאזינים נוצרים בדינמיות ב-showQuestion */ }
     function showNameInput(){
       const prof=getActiveProfile();
       showScreen('nameScreen');
@@ -912,7 +984,7 @@
       arr.forEach(p=>{
         const btn=document.createElement('button');
         btn.className='w-full text-right p-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-between';
-        btn.innerHTML=`<span class="font-bold text-gray-800">${escapeHtml(p.name)}</span><span class="text-sm text-gray-500 ltr">${new Date(p.lastSeen||Date.now()).toLocaleDateString('he-IL')}</span>`;
+        btn.innerHTML=`<span class="font-semibold text-gray-800">${escapeHtml(p.name)}</span><span class="text-sm text-gray-500 ltr">${new Date(p.lastSeen||Date.now()).toLocaleDateString('he-IL')}</span>`;
         btn.onclick=()=>{ setActiveProfile(p.id); $('#playerName').value=p.name; $('#userPickerModal').classList.add('hidden'); if(!$('#profileScreen').classList.contains('hidden')) renderProfile(); };
         list.appendChild(btn);
       });
@@ -926,7 +998,7 @@
       if (prof && prof.name) name=prof.name.trim();
       else {
         const inp=$('#playerName'); const typed=(inp?.value||'').trim();
-        if(!typed){ alert('אנא הכנס את שמך'); inp?.focus(); return; }
+        if(!typed){ alert('אנא הכניסו את שמכם'); inp?.focus(); return; }
         name=typed;
       }
       playerName=name;
@@ -949,7 +1021,6 @@
       showScreen('welcomeScreen');
     }
     document.addEventListener('DOMContentLoaded', init);
-
   </script>
 </body>
 </html>
