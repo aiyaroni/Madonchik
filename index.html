@@ -3,349 +3,416 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Madonchik — חידון פיזיקה</title>
+  <title>מדעאונצ׳יק - חידון פיזיקה</title>
   <!--
-    ===== נתונים דינמיים =====
-    JSON בנתיב: /data/physics-questions.json
+    קובץ שאלות אופציונלי: /data/physics-questions.json
     פורמט פריט:
     {
       "q": "למה רואים ברק לפני רעם?",
       "choices": ["קול מהיר יותר","אור מהיר יותר","זה קורה יחד","תלוי בעננים"],
       "correct": 1,
       "hint": "האור מהיר מהקול.",
-      "steps": ["צעד 1…", "צעד 2…"],
-      "topic": "waves",        // אופציונלי: waves | optics | motion | electricity | gravity | pressure | buoyancy | thermo
-      "level": "easy"          // אופציונלי: easy | medium | hard
-      // אופציונלי: "img": "/images/physics/waves.svg"  // איור מותאם אישית אם קיים
+      "steps": ["מה נע מהר יותר","מה רואים קודם","סיכום"],
+      "topic": "waves",        // waves | optics | motion | electricity | gravity | pressure | buoyancy | thermo | general
+      "level": "easy",         // easy | medium | hard
+      "img": "/images/physics/waves.svg" // איור אופציונלי
     }
   -->
   <style>
     :root{
       --ink:#1f2430; --ink-soft:#4b5263; --bg:#f6f7fb; --card:#ffffff;
-      --accent:#4f7cff; --accent-2:#00b894; --wrong:#ff6565; --muted:#e6e9f2;
-      --ring: #93c5fd; --radius:14px; --shadow:0 6px 24px rgba(0,0,0,.06);
+      --accent:#6b74ff; --accent-2:#22c55e; --wrong:#ff6b6b; --muted:#e6e9f2; --ring:#93c5fd;
+      --radius:16px; --shadow:0 8px 28px rgba(0,0,0,.08);
     }
     html.dark{
       --ink:#e6e9f2; --ink-soft:#b6bed1; --bg:#0f1116; --card:#161a24;
-      --accent:#7aa2ff; --accent-2:#2bd4a7; --wrong:#ff7b88; --muted:#22283a; --ring:#7aa2ff;
-      --shadow:0 6px 24px rgba(0,0,0,.40);
+      --accent:#8b92ff; --accent-2:#2bd4a7; --wrong:#ff7b88; --muted:#23283a; --ring:#7aa2ff;
+      --shadow:0 8px 28px rgba(0,0,0,.40);
     }
-
-    *{box-sizing:border-box}
+    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
     html,body{height:100%}
-    body{ margin:0; background:var(--bg); color:var(--ink);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Heebo,Arimo,Arial,sans-serif; line-height:1.6 }
+    body{margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,Segoe UI,Roboto,Heebo,Arimo,Arial,sans-serif; line-height:1.6}
 
-    /* מבנה ורספונסיביות */
-    .wrap{ max-width:980px; margin:0 auto; padding: max(16px, env(safe-area-inset-top)) 16px 24px; min-height:100dvh; }
+    /* עטיפה וגריד כללי */
+    .wrap{max-width:1080px; margin:0 auto; padding: max(16px, env(safe-area-inset-top)) 16px 24px; min-height:100dvh}
+    header.top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap}
+    .brand{display:flex; align-items:center; gap:10px}
+    .logo{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-weight:900; color:#fff; background:linear-gradient(135deg, var(--accent), #aab0ff); box-shadow:var(--shadow)}
+    .brand h1{margin:0; font-weight:900; letter-spacing:.2px; font-size:clamp(20px,2.2vw,26px)}
 
-    header.top{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap }
-    .brand{ display:flex; align-items:center; gap:10px; }
-    .logo{ width:44px; height:44px; border-radius:10px; display:grid; place-items:center;
-      background:linear-gradient(135deg, var(--accent), #9ab7ff); color:#fff; font-weight:900; box-shadow:var(--shadow) }
-    .brand h1{ margin:0; font-weight:900; letter-spacing:.2px; font-size:clamp(20px,2.2vw,26px) }
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{border:1px solid var(--muted); background:var(--card); color:var(--ink); border-radius:999px; padding:10px 14px; cursor:pointer; font-weight:800; font-size:14px; box-shadow:var(--shadow)}
+    .chip:focus-visible{outline:3px solid var(--ring); outline-offset:2px}
+    .chip[aria-pressed="true"]{box-shadow:0 0 0 3px rgba(147,197,253,.35), var(--shadow)}
 
-    .toolbar{ display:flex; gap:8px; flex-wrap:wrap }
-    .chip{ border:1px solid var(--muted); background:var(--card); color:var(--ink);
-      border-radius:999px; padding:9px 12px; cursor:pointer; font-weight:800; font-size:14px; box-shadow:var(--shadow) }
-    .chip:focus-visible{ outline:3px solid var(--ring); outline-offset:2px }
-    .chip[aria-pressed="true"]{ box-shadow:0 0 0 3px rgba(147,197,253,.35), var(--shadow) }
+    .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+    .subhead{font-weight:900; font-size:clamp(18px,1.6vw,22px); color:#1f2937; letter-spacing:-.01em}
 
-    .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; }
+    .progress{height:10px; background:var(--muted); border-radius:999px; overflow:hidden; margin:12px 0 14px}
+    .bar{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),#8aa0ff); transition:width .35s ease}
 
-    .meta{ display:flex; justify-content:space-between; align-items:center; gap:8px; color:var(--ink-soft); font-size:14px; margin-bottom:10px }
-    .score{ display:inline-flex; align-items:center; gap:8px; background:rgba(0,0,0,.02);
-      border:1px solid var(--muted); padding:6px 10px; border-radius:10px }
+    /* מסכים */
+    .screen{display:none}
+    .screen.active{display:block}
 
-    .progress{ height:10px; background:var(--muted); border-radius:999px; overflow:hidden; margin:8px 0 16px }
-    .bar{ height:100%; width:0%; background:linear-gradient(90deg,var(--accent),#6a9bff); transition:width .35s ease }
+    /* אזור שאלה */
+    .q-wrap{display:grid; grid-template-columns:64px 1fr; gap:12px; align-items:center}
+    @media (min-width:640px){ .q-wrap{grid-template-columns:72px 1fr} }
+    .q-illus{width:64px; height:64px; border-radius:16px; background:rgba(107,116,255,.10); display:grid; place-items:center; overflow:hidden; font-size:36px}
+    .q-illus img{width:100%; height:100%; object-fit:contain}
+    .q-illus svg{width:72%; height:72%}
+    .q{font-size:clamp(20px,2.2vw,26px); margin:2px 0 2px; font-weight:900; overflow-wrap:anywhere}
+    .assist{font-size:14px; color:var(--ink-soft)}
 
-    .q-wrap{ display:grid; grid-template-columns: 64px 1fr; gap:14px; align-items:center }
-    .q-illus{ width:64px; height:64px; border-radius:14px; background:rgba(79,124,255,.08); display:grid; place-items:center; overflow:hidden }
-    .q-illus img{ width:100%; height:100%; object-fit:contain }
-    .q-illus svg{ width:72%; height:72% }
+    .coach{display:flex; gap:10px; align-items:flex-start; background:rgba(0,0,0,.03); border:1px solid var(--muted); border-radius:14px; padding:10px 12px; margin:10px 0}
+    .coach .owl{font-size:28px; line-height:1}
+    .coach .say{font-weight:700}
 
-    .q{ font-size:clamp(18px,2vw,22px); margin:6px 0 4px; font-weight:900 }
-    .assist{ font-size:14px; color:var(--ink-soft) }
+    .choices{display:grid; grid-template-columns:1fr; gap:10px; margin-top:8px}
+    @media (min-width:640px){ .choices{grid-template-columns:1fr 1fr} }
 
-    .choices{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px }
-    @media (min-width:640px){ .choices{ grid-template-columns:1fr 1fr } }
-
-    .btn{ border:1px solid var(--muted); background:var(--card); border-radius:12px; padding:14px 14px; text-align:right;
-      cursor:pointer; font-size:16px; transition:transform .02s ease, border-color .2s ease, box-shadow .2s ease; color:var(--ink); min-height:56px }
+    .btn{border:1px solid var(--muted); background:var(--card); border-radius:14px; padding:14px 14px; text-align:right; cursor:pointer; font-size:16px; color:var(--ink); min-height:56px; transition:transform .02s ease, border-color .2s ease, box-shadow .2s ease}
     @media (hover:hover) and (pointer:fine){ .btn:hover{ box-shadow:0 2px 10px rgba(0,0,0,.05) } }
-    .btn:active{ transform:scale(.995) }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed }
-    .btn.correct{ border-color:var(--accent-2); box-shadow:0 0 0 3px rgba(43,212,167,.25) }
-    .btn.wrong{ border-color:var(--wrong); box-shadow:0 0 0 3px rgba(255,101,101,.25) }
-    .btn:focus-visible{ outline:3px solid var(--ring); outline-offset:2px }
+    .btn:active{transform:scale(.995)}
+    .btn[disabled]{opacity:.6; cursor:not-allowed}
+    .btn.correct{border-color:var(--accent-2); box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+    .btn.wrong{border-color:var(--wrong); box-shadow:0 0 0 3px rgba(255,107,107,.25)}
+    .btn:focus-visible{outline:3px solid var(--ring); outline-offset:2px}
 
-    .hint{ background:rgba(79,124,255,.10); border:1px dashed rgba(79,124,255,.35);
-      color:color-mix(in oklab, var(--ink) 90%, var(--ink-soft));
-      padding:10px 12px; border-radius:12px; margin:12px 0 0; display:none; font-size:14px; }
+    .hint{background:rgba(107,116,255,.10); border:1px dashed rgba(107,116,255,.35); color:color-mix(in oklab, var(--ink) 90%, var(--ink-soft)); padding:10px 12px; border-radius:12px; margin:12px 0 0; display:none; font-size:14px}
 
-    .controls{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap }
-    .primary,.ghost{ border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer; font-size:15px }
-    .primary{ background:var(--accent); color:#fff }
-    .primary:disabled{ opacity:.6; cursor:not-allowed }
-    .ghost{ background:rgba(0,0,0,.06); color:var(--ink) }
-    .ghost:focus-visible,.primary:focus-visible{ outline:3px solid var(--ring); outline-offset:2px }
+    .controls{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+    .primary,.ghost{border:0; border-radius:12px; padding:12px 16px; font-weight:900; cursor:pointer; font-size:15px}
+    .primary{background:var(--accent); color:#fff}
+    .primary:disabled{opacity:.6; cursor:not-allowed}
+    .ghost{background:rgba(0,0,0,.06); color:var(--ink)}
+    .ghost:focus-visible,.primary:focus-visible{outline:3px solid var(--ring); outline-offset:2px}
 
-    .summary{ text-align:center; padding:24px 8px; display:none }
-    .summary h2{ margin:0 0 8px; font-size:clamp(20px,2.2vw,26px) }
-    .pill{ display:inline-block; padding:6px 10px; border-radius:999px;
-      background:rgba(43,212,167,.12); color:color-mix(in oklab, var(--ink) 90%, var(--ink-soft)); font-weight:900; margin:6px 0 14px }
+    /* פרופיל */
+    .kpis{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (min-width:720px){ .kpis{grid-template-columns:repeat(3,1fr)} }
+    .kpi{padding:14px; border-radius:14px; border:2px solid var(--muted); background:var(--card)}
+    .kpi .label{font-size:12px; color:#2563eb; font-weight:800}
+    .kpi .val{font-size:28px; font-weight:900}
 
-    .muted-note{ font-size:12px; color:var(--ink-soft) }
-    .kbd{ font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:12px; padding:2px 6px; border-radius:8px; background:var(--muted); border:1px solid color-mix(in oklab, var(--ink) 10%, var(--muted)) }
+    .topics-grid{display:grid; grid-template-columns:1fr; gap:10px}
+    @media (min-width:880px){ .topics-grid{grid-template-columns:repeat(4,1fr)} }
+    .topic-card{padding:12px; border-radius:14px; border:2px solid var(--muted); background:var(--card)}
 
-    .foot{ text-align:center; margin-top:16px; color:var(--ink-soft); font-size:13px }
-    [dir="rtl"] .choices .btn{ text-align:right }
-    .ltr{ direction:ltr; unicode-bidi:embed; display:inline-block }
+    .history{display:grid; gap:8px}
+    .history-row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px; border-radius:12px; border:2px solid var(--muted); background:var(--card)}
+
+    /* חתימה */
+    .site-signature{text-align:center;color:#6b7280;font-size:.875rem;line-height:1.6; margin-top:1.25rem;margin-bottom:1.25rem}
+    @media (min-width:640px){ .site-signature{font-size:1rem;margin-top:2rem;margin-bottom:2rem} }
+    .site-signature a{color:#4b5563;text-decoration:underline}
+    .site-signature a:hover{color:#111827}
+
+    /* מודלים בסיסיים */
+    .modal{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:16px; z-index:60}
+    .modal .dialog{background:var(--card); border-radius:16px; padding:16px; width:min(520px, 96vw); box-shadow:var(--shadow)}
 
     /* Toast */
-    .toast{ position:fixed; inset-inline:0; bottom:16px; display:grid; place-items:center; pointer-events:none; z-index:50 }
-    .toast > div{ pointer-events:auto; background:var(--card); color:var(--ink); border:1px solid var(--muted); border-radius:12px; box-shadow:var(--shadow); padding:10px 14px; font-weight:700 }
+    .toast{position:fixed; inset-inline:0; bottom:16px; display:none; place-items:center; pointer-events:none; z-index:70}
+    .toast > div{pointer-events:auto; background:var(--card); color:var(--ink); border:1px solid var(--muted); border-radius:12px; box-shadow:var(--shadow); padding:10px 14px; font-weight:800}
 
-    @media (prefers-reduced-motion: reduce){ .bar{ transition:none } }
+    .ltr{direction:ltr; unicode-bidi:embed; display:inline-block}
+    [dir="rtl"] .choices .btn{text-align:right}
+    @media (prefers-reduced-motion: reduce){ .bar{transition:none} }
   </style>
 </head>
 <body>
-  <a href="#main" class="visually-hidden" style="position:absolute;inset-inline-start:8px;top:-40px;background:#000;color:#fff;padding:8px 12px;border-radius:8px;">דלגו לתוכן</a>
   <div class="wrap">
     <header class="top" aria-label="סרגל עליון">
       <div class="brand">
         <div class="logo" aria-hidden="true">Md</div>
-        <h1 title="Madonchik">Madonchik — חידון פיזיקה</h1>
+        <h1 title="Madonchik">Madonchik - חידון פיזיקה</h1>
       </div>
-      <div class="toolbar" role="group" aria-label="בקרות">
+      <div class="toolbar" role="group" aria-label="בקרות עליונות">
         <button id="audioToggle" class="chip" type="button" aria-pressed="false" title="מצב צליל">🔊 צליל</button>
-        <button id="themeToggle" class="chip" type="button" aria-pressed="false" title="מצב כהה/בהיר">🌗 מצב כהה</button>
-        <button id="refreshBankBtn" class="chip" type="button" title="טען/רענן מאגר שאלות">♻️ רענון מאגר</button>
+        <button id="themeToggle" class="chip" type="button" aria-pressed="false" title="מצב כהה או בהיר">🌗 מצב כהה</button>
+        <button id="refreshBankBtn" class="chip" type="button" title="טען או רענן מאגר שאלות">♻️ רענון מאגר</button>
+        <button id="profileBtn" class="chip" type="button" title="אזור אישי">👤 אזור אישי</button>
       </div>
     </header>
 
-    <main id="main" class="card" tabindex="-1">
-      <div class="meta">
-        <div class="score" id="scoreBox" aria-live="polite">תוצאה: <strong id="score">0</strong> / <span id="total">10</span></div>
-        <div id="counter" aria-live="polite">שאלה <b class="ltr">1</b> מתוך <b class="ltr">10</b></div>
+    <!-- מסך ברוך הבא -->
+    <section id="welcomeScreen" class="screen active">
+      <div class="card" style="text-align:center; padding:28px 18px">
+        <div style="font-size:64px; margin-bottom:8px">🦉</div>
+        <h2 class="subhead" style="margin:0 0 8px; color:#6b74ff">מדעונצ'יק</h2>
+        <p style="font-size:18px; margin:0 0 16px">בואו ללמוד פיזיקה בשאלות קצרות עם שופי</p>
+        <button id="startBtn" class="primary" type="button" style="font-size:18px; padding:14px 22px">התחלת משחק</button>
       </div>
+      <footer class="site-signature px-4">
+        <div>© 2025 yaroni studio - תוכן חזק, עובד חכם ומבוסס על בינה</div>
+        <a href="mailto:hello@yaronistudio.com" dir="ltr" class="ltr">hello@yaronistudio.com</a>
+      </footer>
+    </section>
 
-      <div class="progress" aria-label="התקדמות חידון">
-        <div class="bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0% הושלמו"></div>
+    <!-- מסך שם -->
+    <section id="nameScreen" class="screen">
+      <div class="card" style="max-width:560px; margin-inline:auto; text-align:center">
+        <div style="font-size:56px; margin-bottom:6px">👋</div>
+        <h2 class="subhead" id="nameTitle" style="margin:0 0 8px">איך קוראים לכם?</h2>
+        <p id="nameSubtitle" style="color:var(--ink-soft); margin:0 0 8px; display:none"></p>
+        <input id="playerName" type="text" inputmode="text" placeholder="הקלידו שם" style="width:100%; font-size:18px; padding:14px; border-radius:12px; border:2px solid var(--muted); text-align:center; margin:8px 0 8px" />
+        <div style="margin:4px 0 12px">
+          <button id="profileOrSwitchBtn" class="ghost" type="button">החלפת משתמש או אזור אישי</button>
+        </div>
+        <button id="nameNext" class="primary" type="button">המשך</button>
       </div>
+    </section>
 
-      <div id="quizArea" aria-live="polite">
+    <!-- בורר משתמשים -->
+    <div id="userPicker" class="modal" aria-hidden="true">
+      <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="userPickerTitle">
+        <h3 id="userPickerTitle" class="subhead" style="margin:0 0 8px">בחרו משתמש</h3>
+        <div id="userList" style="max-height:50vh; overflow:auto; display:grid; gap:8px; margin:8px 0 12px"></div>
+        <div style="display:flex; gap:8px; justify-content:space-between">
+          <button id="userPickerClose" class="ghost" type="button">סגירה</button>
+          <button id="newUserBtn" class="primary" type="button">משתמש חדש</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- מסך חידון -->
+    <section id="quizScreen" class="screen">
+      <div class="card">
+        <div class="meta" style="display:flex; justify-content:space-between; align-items:center; color:var(--ink-soft); font-size:14px; margin-bottom:8px">
+          <div id="greet" style="font-weight:800">שלום אורח</div>
+          <div class="score">ניקוד: <strong id="score">0</strong> / <span id="total">10</span></div>
+          <div id="counter">שאלה <b class="ltr">1</b> מתוך <b class="ltr">10</b></div>
+        </div>
+        <div class="progress" aria-label="התקדמות משחק"><div class="bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0% הושלמו"></div></div>
+
         <div class="q-wrap">
-          <div class="q-illus" id="illus" aria-hidden="true"></div>
+          <div class="q-illus" id="illus" aria-hidden="true">🦉</div>
           <div>
-            <div class="q" id="question">טוען סט חדש…</div>
-            <div id="assist" class="assist">בחרו תשובה אחת. ניתן לענות גם עם המספרים במקלדת.</div>
+            <div class="q" id="question">טוענים סט חדש...</div>
+            <div id="assist" class="assist">בחרו תשובה אחת נכונה. אם מסתבכים לוחצים על עזרה.</div>
           </div>
         </div>
+
+        <div class="coach" id="coach" role="status" aria-live="polite"><div class="owl" aria-hidden="true">🦉</div><div class="say" id="coachText">שופי כאן בשבילכם.</div></div>
 
         <div class="choices" id="choices" aria-label="בחירת תשובה" role="group"></div>
         <div class="hint" id="hintBox" role="note"></div>
 
         <div class="controls">
           <button class="ghost" id="hintBtn" type="button" disabled aria-describedby="hintBox">עזרה</button>
-          <button class="primary" id="nextBtn" type="button" disabled>לשאלה הבאה</button>
-          <button class="ghost" id="newSetBtn" type="button" title="סט חדש מתוך המאגר הטעון">סט חדש</button>
+          <button class="primary" id="nextBtn" type="button" disabled>שאלה הבאה</button>
+          <button class="ghost" id="newSetBtn" type="button" title="משחק חדש מתוך המאגר הטעון">משחק חדש</button>
         </div>
-        <div class="muted-note">טיפ: אפשר לענות גם עם המקלדת (<span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span>/<span class="kbd">4</span>, ו־<span class="kbd">N</span> לשאלה הבאה).</div>
       </div>
+    </section>
 
-      <div id="summary" class="summary">
-        <h2 id="summaryTitle">סיכום החידון</h2>
-        <div class="pill"><span id="finalScore">0</span> / <span id="finalTotal">0</span></div>
-        <p id="resultText"></p>
+    <!-- מסך תוצאות -->
+    <section id="resultsScreen" class="screen">
+      <div class="card" style="text-align:center; position:relative; overflow:hidden">
+        <div style="font-size:64px; margin-bottom:8px">🏆</div>
+        <h2 id="resultsTitle" class="subhead" style="margin:0 0 10px">סיכום המשחק</h2>
+        <div style="display:flex; gap:12px; justify-content:center; align-items:center; margin:8px 0 10px">
+          <span style="display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(34,197,94,.12); font-weight:900"><span id="finalScore">0</span> / <span id="finalTotal">0</span></span>
+        </div>
+        <p id="resultText" style="margin:0 0 12px">יפה מאוד</p>
         <div class="controls" style="justify-content:center">
-          <button class="primary" id="restartBtn" type="button">שחקו שוב (סט חדש)</button>
-          <button class="ghost" id="nextQuizBtn" type="button" title="טען מחדש מהמאגר">עוד חידון</button>
+          <button id="learnBtn" class="ghost" type="button" style="display:none">לומדים מהטעויות</button>
+          <button id="retryBtn" class="primary" type="button">אני רוצה לשחק שוב</button>
+          <button id="altBtn" class="ghost" type="button">עוד משחק</button>
+          <button id="profileFromResultsBtn" class="ghost" type="button">אזור אישי</button>
         </div>
       </div>
-    </main>
+      <footer class="site-signature px-4">
+        <div>© 2025 yaroni studio - תוכן חזק, עובד חכם ומבוסס על בינה</div>
+        <a href="mailto:hello@yaronistudio.com" dir="ltr" class="ltr">hello@yaronistudio.com</a>
+      </footer>
+    </section>
 
-    <div class="foot">© 2025 Madonchik — חידון פיזיקה ידידותי. השאלות נטענות דינמית; יש נפילה חכמה אם אין רשת.</div>
+    <!-- מסך טעויות -->
+    <section id="mistakesScreen" class="screen">
+      <div class="card">
+        <div style="text-align:center; margin-bottom:12px">
+          <div style="font-size:56px; margin-bottom:6px">📚</div>
+          <h2 class="subhead" id="mistakesTitle" style="margin:0 0 8px; color:#ef8a00">לומדים מהטעויות</h2>
+          <p id="mistakesLead" style="margin:0 0 8px; color:var(--ink-soft)">הנה השאלות שכדאי לחזק. לוחצים כדי לראות הסבר קצר.</p>
+        </div>
+        <div id="mistakesList" style="display:grid; gap:10px"></div>
+        <div class="controls" style="justify-content:center">
+          <button id="backToResults" class="ghost" type="button">חזרה לתוצאות</button>
+          <button id="restartFromMistakes" class="ghost" type="button">מסך פתיחה</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- מסך אזור אישי -->
+    <section id="profileScreen" class="screen">
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px">
+          <h2 class="subhead" style="margin:0; color:#4f46e5">האזור האישי</h2>
+          <div style="display:flex; gap:8px">
+            <button id="profileStartBtn" class="primary" type="button">התחלת משחק</button>
+            <button id="profileSwitchBtn" class="ghost" type="button">החלפת משתמש</button>
+            <button id="profileNewBtn" class="ghost" type="button">משתמש חדש</button>
+          </div>
+        </div>
+        <div id="profileHeader" style="margin-bottom:10px; color:var(--ink-soft)"></div>
+        <div class="kpis" style="margin-bottom:12px">
+          <div class="kpi"><div class="label">סטים שבוצעו</div><div id="kpiSets" class="val ltr">0</div></div>
+          <div class="kpi"><div class="label">דיוק מצטבר</div><div id="kpiAccuracy" class="val ltr">0%</div></div>
+          <div class="kpi"><div class="label">זמן ממוצע לשאלה</div><div id="kpiAvg" class="val ltr">0s</div></div>
+        </div>
+        <h3 class="subhead" style="margin:6px 0 6px">סטטיסטיקה לפי נושא</h3>
+        <div id="byTopicGrid" class="topics-grid" style="margin-bottom:12px"></div>
+        <h3 class="subhead" style="margin:6px 0 6px">היסטוריית משחקים</h3>
+        <div id="historyList" class="history"></div>
+      </div>
+    </section>
+
+    <footer class="site-signature px-4">
+      <div>© 2025 yaroni studio - תוכן חזק, עובד חכם ומבוסס על בינה</div>
+      <a href="mailto:hello@yaronistudio.com" dir="ltr" class="ltr">hello@yaronistudio.com</a>
+    </footer>
   </div>
 
-  <!-- Toast container -->
-  <div class="toast" id="toast" aria-live="polite" aria-atomic="true" style="display:none"><div id="toastMsg">הודעה</div></div>
+  <!-- טוסט -->
+  <div class="toast" id="toast" aria-live="polite" aria-atomic="true"><div id="toastMsg">הודעה</div></div>
 
   <script>
     /* ===== קבועים ואחסון ===== */
     const BANK_URL = '/data/physics-questions.json';
     const TOTAL_QUESTIONS = 10;
 
-    const LS_BANK = 'madonchik_bank_cache_v1';
-    const LS_BANK_TS = 'madonchik_bank_cache_ts_v1';
-    const LS_SOUND = 'madonchik_sound_muted';
-    const LS_THEME = 'madonchik_theme'; // 'dark' | 'light'
+    const LS_BANK = 'mdk_bank_cache_v1';
+    const LS_BANK_TS = 'mdk_bank_cache_ts_v1';
+    const LS_SOUND = 'mdk_sound_muted';
+    const LS_THEME = 'mdk_theme';
+    const STORE_KEY = 'mdk_profiles_v1';
+    const LS_RECENT = 'mdk_recent_qids_v1';
 
-    let bankLoaded = [];  // מאגר הנוכחי שממנו נבנה כל סט
-    let quizData = [];    // סט שאלות לסשן
-    let idx = 0, score = 0, locked = false, hintStep = -1;
+    let store = null, memOnly = false;
 
-    /* ===== עזרי אקראיות ===== */
-    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
-    function pickRandomQuestions(bank, n){
-      const copy=[...bank]; shuffle(copy);
-      return copy.slice(0, Math.min(n, copy.length)).map(q=>{
-        const mix = q.choices.map((txt,i)=>({txt,i})); shuffle(mix);
-        return {
-          q: q.q, choices: mix.map(c=>c.txt),
-          correct: mix.findIndex(c=>c.i===q.correct),
-          hint: q.hint || '', steps: Array.isArray(q.steps)? q.steps.slice() : [],
-          topic: q.topic || null, level: q.level || null, img: q.img || null
-        };
-      });
+    function uuid(){ return 'xxxxxxxyxxxx'.replace(/[xy]/g, c=>{ const r=Math.random()*16|0, v=c==='x'?r:(r&0x3|0x8); return v.toString(16); }); }
+    function storeInit(){
+      try{ store = JSON.parse(localStorage.getItem(STORE_KEY)||'null'); }catch{ store=null; memOnly=true; }
+      if(!store){ store={version:1, installedAt:Date.now(), activeId:null, profiles:{}}; try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch{ memOnly=true; } }
+    }
+    function saveStore(){ if(memOnly) return; try{ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }catch{ memOnly=true; } }
+    function profilesArr(){ return Object.entries(store.profiles).map(([id,p])=>({id,...p})); }
+    function getActiveProfile(){ return store.activeId ? (store.profiles[store.activeId]||null) : null; }
+    function setActiveProfile(id){ if(!store.profiles[id]) return; store.activeId=id; store.profiles[id].lastSeen=Date.now(); saveStore(); }
+    function ensureProfileByName(name){
+      const norm=(name||'').trim(); if(!norm) return null;
+      const existing=profilesArr().find(p=>p.name.trim()===norm);
+      if(existing){ setActiveProfile(existing.id); return existing; }
+      const id=uuid(); store.profiles[id]={ name:norm, createdAt:Date.now(), lastSeen:Date.now(),
+        totals:{sets:0,questions:0,correct:0,timeSec:0,hints:0}, byTopic:{}, history:[] };
+      setActiveProfile(id); return {id, ...store.profiles[id]};
     }
 
-    /* ===== מאגר מקומי (fallback) ===== */
-    const localBigBank = [
-      { q:"מה מושך חפצים לקרקע?", choices:["חיכוך","גרביטציה","מגנטיות","רוח"], correct:1, hint:"הכוח שמושך הכול למטה", topic:'gravity' },
-      { q:"איזו אנרגיה יש לתנועה?", choices:["קינטית","חשמלית","תרמית","אלסטית"], correct:0, hint:"קינטית = תנועה", topic:'motion' },
-      { q:"למה רואים ברק לפני ששומעים רעם?", choices:["הקול מהיר יותר","האור מהיר יותר","זה קורה יחד","תלוי בעננים"], correct:1, hint:"האור מהיר מהקול", steps:["האור נע מהר יותר מהקול.","ברק זה אור, רעם זה קול.","לכן רואים קודם את הברק."], topic:'waves' },
-      { q:"מדוע ספינה צפה?", choices:["משקל קטן","צפיפות נמוכה ממים","מנוע חזק","מגנטים"], correct:1, hint:"צפיפות קובעת ציפה", topic:'buoyancy' },
-      { q:"איזו אנרגיה נאגרת בקפיץ דחוס?", choices:["קינטית","פוטנציאלית אלסטית","תרמית","חשמלית"], correct:1, hint:"משתחררת בעבודה", topic:'motion' },
-      { q:"מה מודד מדחום?", choices:["טמפרטורה","מסה","לחץ","מהירות"], correct:0, hint:"כמה חם או קר", topic:'thermo' },
-      { q:"איזה כוח גורם למסלול מעגלי?", choices:["ציפה","צנטריפטלי","חיכוך","אלסטי"], correct:1, hint:"פונה אל המרכז", topic:'motion' },
-      { q:"במעגל חשמלי סגור עם סוללה ונורה:", choices:["שום דבר","הנורה תדלק","הסוללה נעלמת","יהיה צליל"], correct:1, hint:"זרם נע במעגל סגור", topic:'electricity' },
-      { q:"איזה צבע נשבר הכי הרבה במים?", choices:["אדום","ירוק","כחול","סגול"], correct:3, hint:"קצה סגלגל של הקשת", topic:'optics' },
-      { q:"מה מקור האנרגיה לרוח?", choices:["השמש מחממת לא אחיד","הירח","מגנטים","רעש"], correct:0, hint:"הבדלי טמפ׳ ולחץ", topic:'thermo' }
-    ];
+    function logSessionToProfile(entry){
+      const prof=getActiveProfile(); if(!prof) return;
+      prof.history.unshift(entry); if(prof.history.length>120) prof.history.pop();
+      prof.totals.sets += 1; prof.totals.questions += entry.count; prof.totals.correct += entry.correct; prof.totals.timeSec += entry.timeSec; prof.totals.hints += entry.hints;
+      Object.entries(entry.topics||{}).forEach(([topic,count])=>{
+        if(!prof.byTopic[topic]) prof.byTopic[topic]={sets:0,questions:0,correct:0,timeSec:0,hints:0};
+        const bt=prof.byTopic[topic]; bt.sets += 1; bt.questions += count; bt.correct += Math.round((entry.correct/entry.count)*count); bt.timeSec += Math.round(entry.timeSec*(count/entry.count)); bt.hints += Math.round(entry.hints*(count/entry.count));
+      });
+      saveStore();
+    }
+
+    /* ===== עזרי זיכרון שאלות אחרונות ===== */
+    function getRecent(){ try{ return JSON.parse(localStorage.getItem(LS_RECENT)||'[]'); }catch{ return []; } }
+    function setRecent(arr){ try{ localStorage.setItem(LS_RECENT, JSON.stringify(arr.slice(-60))); }catch{} }
+    function qId(text){ let h=0; const s=String(text||''); for(let i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h|=0; } return 'q'+Math.abs(h); }
+
+    /* ===== משחק - מצב ===== */
+    let bankLoaded = [];
+    let quizData = [];
+    let idx = 0, score = 0, locked = false, hintStep = -1, startTime=0, totalTime=0, totalHints=0;
+    let mistakes = [];
 
     /* ===== DOM ===== */
+    const $=sel=>document.querySelector(sel);
     const el = {
-      bar: document.getElementById('bar'),
-      score: document.getElementById('score'),
-      total: document.getElementById('total'),
-      counter: document.getElementById('counter'),
-      question: document.getElementById('question'),
-      illus: document.getElementById('illus'),
-      assist: document.getElementById('assist'),
-      choices: document.getElementById('choices'),
-      hintBox: document.getElementById('hintBox'),
-      hintBtn: document.getElementById('hintBtn'),
-      nextBtn: document.getElementById('nextBtn'),
-      quizArea: document.getElementById('quizArea'),
-      summary: document.getElementById('summary'),
-      finalScore: document.getElementById('finalScore'),
-      finalTotal: document.getElementById('finalTotal'),
-      resultText: document.getElementById('resultText'),
-      restartBtn: document.getElementById('restartBtn'),
-      nextQuizBtn: document.getElementById('nextQuizBtn'),
-      newSetBtn: document.getElementById('newSetBtn'),
-      refreshBankBtn: document.getElementById('refreshBankBtn'),
-      audioToggle: document.getElementById('audioToggle'),
-      themeToggle: document.getElementById('themeToggle'),
-      toast: document.getElementById('toast'),
-      toastMsg: document.getElementById('toastMsg'),
-      summaryTitle: document.getElementById('summaryTitle')
+      // כפתורים עליונים
+      audioToggle: $('#audioToggle'), themeToggle: $('#themeToggle'), refreshBankBtn: $('#refreshBankBtn'), profileBtn: $('#profileBtn'),
+      // מסכים
+      welcome: $('#welcomeScreen'), name: $('#nameScreen'), quiz: $('#quizScreen'), results: $('#resultsScreen'), mistakes: $('#mistakesScreen'), profile: $('#profileScreen'),
+      // בורר משתמש
+      userPicker: $('#userPicker'), userList: $('#userList'), userPickerClose: $('#userPickerClose'), newUserBtn: $('#newUserBtn'),
+      // ברוך הבא ושם
+      startBtn: $('#startBtn'), nameInput: $('#playerName'), nameNext: $('#nameNext'), nameTitle: $('#nameTitle'), nameSubtitle: $('#nameSubtitle'), profileOrSwitchBtn: $('#profileOrSwitchBtn'),
+      // חידון
+      greet: $('#greet'), score: $('#score'), total: $('#total'), counter: $('#counter'), bar: $('#bar'), question: $('#question'), illus: $('#illus'), assist: $('#assist'),
+      coach: $('#coach'), coachText: $('#coachText'), choices: $('#choices'), hintBox: $('#hintBox'), hintBtn: $('#hintBtn'), nextBtn: $('#nextBtn'), newSetBtn: $('#newSetBtn'),
+      // תוצאות
+      resultsTitle: $('#resultsTitle'), finalScore: $('#finalScore'), finalTotal: $('#finalTotal'), resultText: $('#resultText'), learnBtn: $('#learnBtn'), retryBtn: $('#retryBtn'), altBtn: $('#altBtn'), profileFromResultsBtn: $('#profileFromResultsBtn'),
+      // טעויות
+      mistakesTitle: $('#mistakesTitle'), mistakesLead: $('#mistakesLead'), mistakesList: $('#mistakesList'), backToResults: $('#backToResults'), restartFromMistakes: $('#restartFromMistakes'),
+      // פרופיל
+      profileHeader: $('#profileHeader'), kpiSets: $('#kpiSets'), kpiAccuracy: $('#kpiAccuracy'), kpiAvg: $('#kpiAvg'), byTopicGrid: $('#byTopicGrid'), historyList: $('#historyList'), profileStartBtn: $('#profileStartBtn'), profileSwitchBtn: $('#profileSwitchBtn'), profileNewBtn: $('#profileNewBtn'),
+      // טוסט
+      toast: $('#toast'), toastMsg: $('#toastMsg')
     };
-    el.total.textContent = TOTAL_QUESTIONS;
 
-    /* ===== סאונד (WebAudio) עם טוגל) ===== */
+    /* ===== אודיו ===== */
     let isMuted = false, audioCtx = null, audioUnlocked = false;
-    function getAudioCtx(){
-      if(isMuted) return null;
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if(!AC) return null;
-      if(!audioCtx) audioCtx = new AC();
-      if(audioCtx.state !== 'running' && audioCtx.resume){ try{ audioCtx.resume(); }catch{} }
-      return audioCtx;
-    }
-    function unlockAudioOnce(){
-      if(audioUnlocked || isMuted) return;
-      const ctx = getAudioCtx(); if(!ctx) return;
-      try{
-        const buffer = ctx.createBuffer(1,1,ctx.sampleRate);
-        const src = ctx.createBufferSource(); const g=ctx.createGain();
-        g.gain.value = 0.0001; src.buffer = buffer; src.connect(g); g.connect(ctx.destination); src.start(0);
-        setTimeout(()=>{ try{ src.disconnect(); g.disconnect(); }catch{} audioUnlocked=true; },0);
-      }catch{}
-    }
-    function tone(freq, dur, t, type='sine', gain=0.22){
-      if(isMuted) return; const ctx=getAudioCtx(); if(!ctx) return;
-      const start = typeof t==='number'?t:ctx.currentTime;
-      const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(freq,start);
-      g.gain.setValueAtTime(gain,start); g.gain.exponentialRampToValueAtTime(0.001,start+dur);
-      o.connect(g); g.connect(ctx.destination); try{ o.start(start); o.stop(start+dur); }catch{}
-    }
-    function playTick(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(520, .08, t, 'triangle', .18); }
+    function getAudioCtx(){ if(isMuted) return null; const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null; if(!audioCtx) audioCtx=new AC(); if(audioCtx.state!=='running'&&audioCtx.resume){ try{ audioCtx.resume(); }catch{} } return audioCtx; }
+    function unlockAudioOnce(){ if(audioUnlocked||isMuted) return; const ctx=getAudioCtx(); if(!ctx) return; try{ const buffer=ctx.createBuffer(1,1,ctx.sampleRate); const src=ctx.createBufferSource(); const g=ctx.createGain(); g.gain.value=0.0001; src.buffer=buffer; src.connect(g); g.connect(ctx.destination); src.start(0); setTimeout(()=>{ try{ src.disconnect(); g.disconnect(); }catch{} audioUnlocked=true; },0); }catch{} }
+    function tone(freq,dur,t,type='sine',gain=.22){ if(isMuted) return; const ctx=getAudioCtx(); if(!ctx) return; const start=typeof t==='number'?t:ctx.currentTime; const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(freq,start); g.gain.setValueAtTime(gain,start); g.gain.exponentialRampToValueAtTime(.001,start+dur); o.connect(g); g.connect(ctx.destination); try{ o.start(start); o.stop(start+dur); }catch{} }
+    function playTick(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(520,.08,t,'triangle',.18); }
     function playSuccess(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(523.25,.10,t,'sine',.18); tone(659.25,.10,t+.09,'sine',.16); tone(783.99,.12,t+.18,'sine',.14); }
     function playError(){ const ctx=getAudioCtx(); if(!ctx){ unlockAudioOnce(); return; } const t=ctx.currentTime; tone(220,.10,t,'square',.18); tone(180,.10,t+.09,'square',.16); }
 
     try{ isMuted = localStorage.getItem(LS_SOUND) === 'true'; }catch{ isMuted=false }
-    el.audioToggle.setAttribute('aria-pressed', isMuted?'true':'false');
-    el.audioToggle.textContent = (isMuted ? '🔇' : '🔊') + ' ' + 'צליל';
-    el.audioToggle.addEventListener('click', ()=>{
-      isMuted = !isMuted;
-      el.audioToggle.setAttribute('aria-pressed', isMuted?'true':'false');
-      el.audioToggle.textContent = (isMuted ? '🔇' : '🔊') + ' ' + 'צליל';
-      try{ localStorage.setItem(LS_SOUND, String(isMuted)); }catch{}
-      if(!isMuted) unlockAudioOnce();
-      playTick();
-    });
+    el.audioToggle.setAttribute('aria-pressed', isMuted?'true':'false'); el.audioToggle.textContent=(isMuted?'🔇':'🔊')+' '+'צליל';
+    el.audioToggle.addEventListener('click', ()=>{ isMuted=!isMuted; el.audioToggle.setAttribute('aria-pressed', isMuted?'true':'false'); el.audioToggle.textContent=(isMuted?'🔇':'🔊')+' '+'צליל'; try{ localStorage.setItem(LS_SOUND, String(isMuted)); }catch{} if(!isMuted) unlockAudioOnce(); playTick(); });
     ['pointerdown','touchstart','click','keydown'].forEach(ev=> window.addEventListener(ev, unlockAudioOnce, { once:true, passive:true }));
 
     /* ===== Theme ===== */
-    (function initTheme(){
-      let stored=null; try{ stored = localStorage.getItem(LS_THEME); }catch{}
-      const wantsDark = stored ? stored==='dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.classList.toggle('dark', wantsDark);
-      el.themeToggle.setAttribute('aria-pressed', wantsDark ? 'true' : 'false');
-      el.themeToggle.textContent = (wantsDark ? '🌞' : '🌗') + ' מצב ' + (wantsDark ? 'בהיר' : 'כהה');
-    })();
-    el.themeToggle.addEventListener('click', ()=>{
-      const nowDark = !document.documentElement.classList.contains('dark');
-      document.documentElement.classList.toggle('dark', nowDark);
-      el.themeToggle.setAttribute('aria-pressed', nowDark ? 'true':'false');
-      el.themeToggle.textContent = (nowDark ? '🌞' : '🌗') + ' מצב ' + (nowDark ? 'בהיר' : 'כהה');
-      try{ localStorage.setItem(LS_THEME, nowDark?'dark':'light'); }catch{}
-      playTick();
-    });
+    (function initTheme(){ let stored=null; try{ stored=localStorage.getItem(LS_THEME);}catch{} const wantsDark= stored? stored==='dark' : (window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.classList.toggle('dark', wantsDark); el.themeToggle.setAttribute('aria-pressed', wantsDark?'true':'false'); el.themeToggle.textContent=(wantsDark?'🌞':'🌗')+' מצב '+(wantsDark?'בהיר':'כהה'); })();
+    el.themeToggle.addEventListener('click', ()=>{ const nowDark=!document.documentElement.classList.contains('dark'); document.documentElement.classList.toggle('dark', nowDark); el.themeToggle.setAttribute('aria-pressed', nowDark?'true':'false'); el.themeToggle.textContent=(nowDark?'🌞':'🌗')+' מצב '+(nowDark?'בהיר':'כהה'); try{ localStorage.setItem(LS_THEME, nowDark?'dark':'light'); }catch{} playTick(); });
 
-    /* ===== טעינת מאגר ===== */
-    async function fetchBankNoStore(){
-      const res = await fetch(BANK_URL, { cache:'no-store' });
-      if(!res.ok) throw new Error('Bad status');
-      const json = await res.json();
-      if(!Array.isArray(json) || !json.length) throw new Error('Empty JSON');
-      return json;
-    }
-    async function loadQuestionBank({forceNetwork=false} = {}){
-      if(forceNetwork){
-        try{
-          const bank = await fetchBankNoStore();
-          try{ localStorage.setItem(LS_BANK, JSON.stringify(bank)); localStorage.setItem(LS_BANK_TS, String(Date.now())); }catch{}
-          toast('מאגר רוענן מהשרת');
-          return bank;
-        }catch{ /* ממשיכים לניסיון קאש/מקומי */ }
-      }
-      try{
-        const cached = JSON.parse(localStorage.getItem(LS_BANK) || '[]');
-        if(cached && cached.length){ toast('נטען מאגר מהיר מהדפדפן'); return cached; }
-      }catch{}
-      try{
-        const bank = await fetchBankNoStore();
-        try{ localStorage.setItem(LS_BANK, JSON.stringify(bank)); localStorage.setItem(LS_BANK_TS, String(Date.now())); }catch{}
-        toast('מאגר נטען מהשרת');
-        return bank;
-      }catch{
-        toast('אין רשת — נטען מאגר מקומי');
-        return localBigBank;
-      }
+    /* ===== מאגר שאלות ===== */
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a }
+    function enrichQuestion(q){ const id=q.id||qId(q.q); return {...q, id, topic:q.topic||'general'}; }
+    function pickRandomQuestions(bank, n){
+      const recent=new Set(getRecent());
+      const shuffled=[...bank].map(enrichQuestion); shuffle(shuffled);
+      const selected=[]; const seen=new Set();
+      for(const q of shuffled){ const id=q.id; if(recent.has(id) || seen.has(id)) continue; selected.push(q); seen.add(id); if(selected.length===n) break; }
+      // אם לא הספיק - נרפה ממסנן recent אבל נשמור ייחודיות
+      if(selected.length<n){ for(const q of shuffled){ const id=q.id; if(seen.has(id)) continue; selected.push(q); seen.add(id); if(selected.length===n) break; } }
+      // ערבוב תשובות ובניית פריט משחק
+      const result=selected.map(q=>{ const mix=q.choices.map((txt,i)=>({txt,i})); shuffle(mix); return { id:q.id, q:q.q, choices:mix.map(c=>c.txt), correct:mix.findIndex(c=>c.i===q.correct), hint:q.hint||'', steps:Array.isArray(q.steps)?q.steps.slice():[], topic:q.topic||'general', level:q.level||null, img:q.img||null }; });
+      // עדכון recent
+      const newRecent=[...recent, ...result.map(x=>x.id)]; setRecent(newRecent);
+      return result;
     }
 
-    async function refreshBank(){
-      el.refreshBankBtn.disabled = true; el.refreshBankBtn.textContent = '⏳ מרענן…';
-      try{ bankLoaded = await loadQuestionBank({forceNetwork:true}); playSuccess(); }
-      catch{ playError(); }
-      finally{ el.refreshBankBtn.disabled = false; el.refreshBankBtn.textContent = '♻️ רענון מאגר'; }
+    const localBigBank = [
+      { q:"מה מושך חפצים לקרקע", choices:["חיכוך","גרביטציה","מגנטיות","רוח"], correct:1, hint:"הכוח שמושך הכל למטה", topic:'gravity' },
+      { q:"איזו אנרגיה יש לתנועה", choices:["קינטית","חשמלית","תרמית","אלסטית"], correct:0, hint:"קינטית זה תנועה", topic:'motion' },
+      { q:"למה רואים ברק לפני ששומעים רעם", choices:["הקול מהיר יותר","האור מהיר יותר","זה קורה יחד","תלוי בעננים"], correct:1, hint:"האור מהיר מהקול", steps:["האור נע מהר יותר מהקול","ברק זה אור, רעם זה קול","לכן רואים קודם את הברק"], topic:'waves' },
+      { q:"מדוע ספינה צפה", choices:["משקל קטן","צפיפות נמוכה ממים","מנוע חזק","מגנטים"], correct:1, hint:"צפיפות קובעת ציפה", topic:'buoyancy' },
+      { q:"מה מודד מדחום", choices:["טמפרטורה","מסה","לחץ","מהירות"], correct:0, hint:"כמה חם או קר", topic:'thermo' },
+      { q:"איזה כוח גורם למסלול מעגלי", choices:["ציפה","צנטריפטלי","חיכוך","אלסטי"], correct:1, hint:"פונה אל המרכז", topic:'motion' },
+      { q:"במעגל חשמלי סגור עם סוללה ונורה", choices:["שום דבר","הנורה תדלק","הסוללה נעלמת","יהיה צליל"], correct:1, hint:"זרם נע במעגל סגור", topic:'electricity' },
+      { q:"איזה צבע נשבר הכי הרבה במים", choices:["אדום","ירוק","כחול","סגול"], correct:3, hint:"הקצה הסגול של הקשת", topic:'optics' },
+      { q:"מה מקור האנרגיה לרוח", choices:["השמש מחממת לא אחיד","הירח","מגנטים","רעש"], correct:0, hint:"הבדלי טמפרטורה ולחץ", topic:'thermo' }
+    ];
+
+    async function fetchBankNoStore(){ const res=await fetch(BANK_URL, {cache:'no-store'}); if(!res.ok) throw new Error('Bad status'); const json=await res.json(); if(!Array.isArray(json)||!json.length) throw new Error('Empty JSON'); return json; }
+    async function loadQuestionBank({forceNetwork=false}={}){
+      if(forceNetwork){ try{ const bank=await fetchBankNoStore(); try{ localStorage.setItem(LS_BANK, JSON.stringify(bank)); localStorage.setItem(LS_BANK_TS, String(Date.now())); }catch{} toast('המאגר רוענן מהשרת'); return bank; }catch{} }
+      try{ const cached=JSON.parse(localStorage.getItem(LS_BANK)||'[]'); if(cached && cached.length){ toast('נטען מאגר מהיר מהדפדפן'); return cached; } }catch{}
+      try{ const bank=await fetchBankNoStore(); try{ localStorage.setItem(LS_BANK, JSON.stringify(bank)); localStorage.setItem(LS_BANK_TS, String(Date.now())); }catch{} toast('המאגר נטען מהשרת'); return bank; }catch{ toast('אין רשת - נטען מאגר מקומי'); return localBigBank; }
     }
 
-    /* ===== איורים קלים לפי topic או תמונה חיצונית ===== */
+    async function refreshBank(){ el.refreshBankBtn.disabled=true; el.refreshBankBtn.textContent='⏳ מרענן...'; try{ bankLoaded=await loadQuestionBank({forceNetwork:true}); playSuccess(); }catch{ playError(); } finally{ el.refreshBankBtn.disabled=false; el.refreshBankBtn.textContent='♻️ רענון מאגר'; } }
+
+    /* ===== איור לפי topic או תמונה ===== */
     function svgIcon(topic){
       const map={
         waves:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/><path d="M2 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/></svg>`,
@@ -359,150 +426,134 @@
       };
       return map[topic] || `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg>`;
     }
-    function renderIllustration(item){
-      el.illus.innerHTML = '';
-      if(item?.img){
-        const img = document.createElement('img'); img.alt='איור תומך'; img.src=item.img; el.illus.appendChild(img); return;
-      }
-      if(item?.topic){ el.illus.innerHTML = svgIcon(item.topic); }
-    }
+    function renderIllustration(item){ el.illus.innerHTML='🦉'; if(item?.img){ const img=document.createElement('img'); img.alt='איור'; img.src=item.img; el.illus.innerHTML=''; el.illus.appendChild(img); return; } if(item?.topic){ el.illus.innerHTML=svgIcon(item.topic); } }
 
-    /* ===== Toast ===== */
-    let toastTimer=null;
-    function toast(msg){
-      el.toastMsg.textContent = msg;
-      el.toast.style.display = 'grid';
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>{ el.toast.style.display='none'; }, 2000);
-    }
+    /* ===== ניווט מסכים ===== */
+    const SCREENS=['welcomeScreen','nameScreen','quizScreen','resultsScreen','mistakesScreen','profileScreen'];
+    function showScreen(id){ SCREENS.forEach(s=>{ const elS=$('#'+s); if(!elS) return; elS.classList.toggle('active', s===id); }); window.scrollTo({top:0, left:0, behavior:'auto'}); }
 
-    /* ===== משחק ===== */
+    /* ===== לוגיקת משחק ===== */
     function render(){
-      locked = false;
-      const item = quizData[idx];
-      el.question.textContent = item?.q || '—';
-      el.assist.textContent = 'בחרו תשובה אחת. ניתן לענות גם עם המספרים במקלדת.';
-      renderIllustration(item);
+      locked=false; const item=quizData[idx];
+      el.question.textContent=item?.q||'...'; el.assist.textContent='בחרו תשובה אחת נכונה'; el.coachText.textContent='אם מסתבכים לוחצים על עזרה'; renderIllustration(item);
+      el.choices.innerHTML=''; el.hintBox.style.display='none'; el.hintBox.textContent=''; hintStep=-1; startTime=Date.now();
 
-      el.choices.innerHTML = '';
-      el.hintBox.style.display = 'none'; el.hintBox.textContent = '';
-      hintStep = -1;
+      const hasAssist=(item?.steps && item.steps.length) || item?.hint; el.hintBtn.disabled=!hasAssist; el.hintBtn.textContent=(item?.steps && item.steps.length)?'צעד הבא':'עזרה'; el.nextBtn.disabled=true;
+      el.counter.innerHTML=`שאלה <b class="ltr">${idx+1}</b> מתוך <b class="ltr">${quizData.length}</b>`; const progress=Math.round((idx/quizData.length)*100); el.bar.style.width=progress+'%'; el.bar.setAttribute('aria-valuenow', String(progress)); el.bar.setAttribute('aria-valuetext', `${progress}% הושלמו`);
 
-      const hasAssist = (item?.steps && item.steps.length) || item?.hint;
-      el.hintBtn.disabled = !hasAssist;
-      el.hintBtn.textContent = (item?.steps && item.steps.length) ? 'הצעד הבא' : 'רמז';
-      el.nextBtn.disabled = true;
-
-      el.counter.innerHTML = `שאלה <b class="ltr">${idx+1}</b> מתוך <b class="ltr">${quizData.length}</b>`;
-      const progress = Math.round((idx / quizData.length) * 100);
-      el.bar.style.width = progress + '%';
-      el.bar.setAttribute('aria-valuenow', String(progress));
-      el.bar.setAttribute('aria-valuetext', `${progress}% הושלמו`);
-
-      (item?.choices || []).forEach((txt, i) => {
-        const b = document.createElement('button');
-        b.className = 'btn'; b.type = 'button'; b.textContent = txt;
-        b.addEventListener('click', () => selectAnswer(i, b));
-        b.addEventListener('keydown', (e)=>{ if((e.key==='Enter'||e.key===' ')&&!b.disabled){ e.preventDefault(); b.click(); }});
-        el.choices.appendChild(b);
-      });
-
-      // פוקוס לכותרת השאלה לנגישות
-      requestAnimationFrame(()=>{ try{ document.getElementById('main').focus({preventScroll:true}); }catch{} });
+      (item?.choices||[]).forEach((txt,i)=>{ const b=document.createElement('button'); b.className='btn'; b.type='button'; b.textContent=txt; b.setAttribute('tabindex','-1'); b.addEventListener('click',()=>selectAnswer(i,b)); el.choices.appendChild(b); });
     }
 
     function selectAnswer(choiceIndex, btn){
-      if(locked) return; locked = true; playTick();
-      const item = quizData[idx]; const correct = item.correct;
-
-      [...el.choices.children].forEach((b, i) => { b.disabled = true; if(i === correct) b.classList.add('correct'); });
-
-      if(choiceIndex === correct){ score++; el.score.textContent = String(score); playSuccess(); }
-      else{ btn.classList.add('wrong'); playError(); onWrongAnswer(item); }
-
-      el.nextBtn.disabled = false;
-      el.assist.textContent = 'מצוין. אפשר להתקדם לשאלה הבאה.';
+      if(locked) return; locked=true; playTick(); const item=quizData[idx]; const correct=item.correct; const end=Date.now(); totalTime+=Math.max(0,(end-startTime)/1000);
+      [...el.choices.children].forEach((b,i)=>{ b.disabled=true; if(i===correct) b.classList.add('correct'); });
+      if(choiceIndex===correct){ score++; el.score.textContent=String(score); playSuccess(); el.coachText.textContent='בול. כל הכבוד'; }
+      else{ btn.classList.add('wrong'); playError(); el.coachText.textContent='כמעט. הנה עזרה קצרה'; onWrongAnswer(item); trackMistake(item); }
+      el.nextBtn.disabled=false;
     }
 
-    function onWrongAnswer(item){
-      if(item.steps && item.steps.length){
-        hintStep = 0; el.hintBox.textContent = item.steps[0]; el.hintBox.style.display = 'block';
-        el.hintBtn.textContent = (item.steps.length > 1) ? 'הצעד הבא' : 'סיום צעדים';
-        el.hintBtn.disabled = (item.steps.length <= 1);
-      }else if(item.hint){
-        el.hintBox.textContent = item.hint; el.hintBox.style.display = 'block'; el.hintBtn.disabled = true;
-      }
+    function onWrongAnswer(item){ if(item.steps && item.steps.length){ hintStep=0; el.hintBox.textContent=item.steps[0]; el.hintBox.style.display='block'; el.hintBtn.textContent=(item.steps.length>1)?'צעד הבא':'סיום צעדים'; el.hintBtn.disabled=(item.steps.length<=1); totalHints++; } else if(item.hint){ el.hintBox.textContent=item.hint; el.hintBox.style.display='block'; el.hintBtn.disabled=true; totalHints++; } }
+
+    function trackMistake(item){
+      mistakes.push({ id:item.id, q:item.q, correctIndex:item.correct, correctText:item.choices[item.correct], hint:item.hint, steps:item.steps, topic:item.topic });
     }
 
-    el.hintBtn.addEventListener('click', ()=>{
-      const item = quizData[idx]; if(!item) return; playTick();
-      if(item.steps && item.steps.length){
-        hintStep++; const stepText = item.steps[Math.min(hintStep, item.steps.length-1)];
-        el.hintBox.textContent = stepText; el.hintBox.style.display = 'block';
-        const moreLeft = hintStep < item.steps.length - 1;
-        el.hintBtn.textContent = moreLeft ? 'הצעד הבא' : 'סיום צעדים';
-        if(!moreLeft) el.hintBtn.disabled = true;
-      }else if(item.hint){ el.hintBox.textContent = item.hint; el.hintBox.style.display = 'block'; el.hintBtn.disabled = true; }
-    });
+    el.hintBtn.addEventListener('click', ()=>{ const item=quizData[idx]; if(!item) return; playTick(); if(item.steps && item.steps.length){ hintStep++; const step=item.steps[Math.min(hintStep, item.steps.length-1)]; el.hintBox.textContent=step; el.hintBox.style.display='block'; const more=hintStep<item.steps.length-1; el.hintBtn.textContent= more? 'צעד הבא' : 'סיום צעדים'; if(!more) el.hintBtn.disabled=true; totalHints++; } else if(item.hint){ el.hintBox.textContent=item.hint; el.hintBox.style.display='block'; el.hintBtn.disabled=true; totalHints++; } });
 
-    el.nextBtn.addEventListener('click', ()=>{ if(idx < quizData.length - 1){ idx++; render(); } else { finish(); } playTick(); });
+    el.nextBtn.addEventListener('click', ()=>{ if(idx<quizData.length-1){ idx++; render(); el.coachText.textContent='קדימה לשאלה הבאה'; } else { finish(); } playTick(); });
     el.newSetBtn.addEventListener('click', ()=>{ buildSessionFromLoadedBank(); playTick(); });
-    el.nextQuizBtn.addEventListener('click', async ()=>{ await refreshBank(); await newSession(); });
-    el.restartBtn.addEventListener('click', ()=>{ newSession(); playTick(); });
-
-    // קיצורי מקלדת: 1/2/3/4 בחירה; N לשאלה הבאה; H לרמז
-    document.addEventListener('keydown', (e)=>{
-      const k = e.key.toLowerCase();
-      if(['1','2','3','4'].includes(k) && el.choices.children.length){ const i = parseInt(k,10)-1; const b = el.choices.children[i]; if(b) b.click(); }
-      else if(k==='n' && !el.nextBtn.disabled){ el.nextBtn.click(); }
-      else if(k==='h' && !el.hintBtn.disabled){ el.hintBtn.click(); }
-    });
 
     function finish(){
-      el.bar.style.width = '100%'; el.bar.setAttribute('aria-valuenow','100'); el.bar.setAttribute('aria-valuetext','100% הושלמו');
-      el.quizArea.style.display = 'none'; el.summary.style.display = 'block';
-      el.finalScore.textContent = String(score); el.finalTotal.textContent = String(quizData.length);
+      el.bar.style.width='100%'; el.bar.setAttribute('aria-valuenow','100'); el.bar.setAttribute('aria-valuetext','100% הושלמו');
+      showScreen('resultsScreen'); el.finalScore.textContent=String(score); el.finalTotal.textContent=String(quizData.length);
+      const pct=Math.round((score/quizData.length)*100); let title='סיכום המשחק', msg='יפה מאוד. ממשיכים לגלות ולשאול'; if(pct===100){ title='מושלם'; msg='אלופים. ננסה עוד שלב'; confetti(); } else if(pct>=80){ title='מעולה'; msg='כמעט מושלם - עוד סיבוב ויש שיא חדש'; } else if(pct>=50){ title='יש התקדמות'; msg='עוד קצת תרגול ונקפוץ קדימה'; } else { title='כל התחלה היא צעד ראשון'; msg='לא נורא. חוזרים לסיבוב נוסף ומשתפרים מהר'; }
+      el.resultsTitle.textContent=title; el.resultText.textContent=msg; el.coachText.textContent='טוב מאוד. אפשר לשחק שוב או לטעון משחק חדש';
 
-      const pct = Math.round((score/quizData.length)*100);
-      let title = 'סיכום החידון'; let msg = 'יפה מאוד! המשיכו לשאול, לבדוק ולגלות.';
-      if(pct === 100){ title='מושלם!'; msg='אלופים! תפדלו לעוד אתגר קטן ⭐'; confetti(); }
-      else if(pct >= 80){ title='מעולה!'; msg='כמעט מושלם — סיבוב נוסף ויש שיא חדש.'; }
-      else if(pct >= 50){ title='יש התקדמות!'; msg='עוד תרגול קצר ותראו קפיצה חדה בביטחון.'; }
-      else { title='כל התחלה היא צעד ראשון'; msg='לא נורא. חוזרים לסיבוב נוסף ומשתפרים מהר.'; }
-      el.summaryTitle.textContent = title; el.resultText.textContent = msg;
+      // לוג פרופיל
+      const topicsCount={}; quizData.forEach(q=>{ topicsCount[q.topic]=(topicsCount[q.topic]||0)+1; });
+      const entry={ id:uuid(), ts:Date.now(), count:quizData.length, correct:score, timeSec:Math.round(totalTime), hints:totalHints, topics:topicsCount, scorePct:pct };
+      logSessionToProfile(entry);
+
+      // טעויות
+      el.learnBtn.style.display = mistakes.length ? 'inline-block' : 'none';
     }
 
     function buildSessionFromLoadedBank(){
-      const n = Math.min(TOTAL_QUESTIONS, bankLoaded.length || TOTAL_QUESTIONS);
-      quizData = pickRandomQuestions(bankLoaded.length? bankLoaded : localBigBank, n);
-      idx = 0; score = 0; locked = false;
-      el.score.textContent = '0'; el.total.textContent = String(quizData.length);
-      el.quizArea.style.display = 'block'; el.summary.style.display = 'none';
-      render();
+      const n=Math.min(TOTAL_QUESTIONS, (bankLoaded && bankLoaded.length) ? bankLoaded.length : localBigBank.length);
+      mistakes = [];
+      quizData=pickRandomQuestions(bankLoaded.length?bankLoaded:localBigBank, n);
+      idx=0; score=0; locked=false; totalTime=0; totalHints=0; el.score.textContent='0'; el.total.textContent=String(quizData.length);
+      const prof=getActiveProfile(); const nm=prof?prof.name:'אורח'; el.greet.textContent=`שלום ${nm}`;
+      showScreen('quizScreen'); render();
     }
 
-    async function newSession(){ if(!bankLoaded.length){ bankLoaded = await loadQuestionBank(); } buildSessionFromLoadedBank(); }
+    async function newSession(){ if(!bankLoaded.length){ bankLoaded=await loadQuestionBank(); } buildSessionFromLoadedBank(); }
 
-    /* ===== Confetti עדין ===== */
-    function confetti(){
-      try{ if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; }catch{}
-      const root = document.body; const n = 28;
-      for(let i=0;i<n;i++){
-        const dot=document.createElement('span'); dot.style.position='fixed'; dot.style.width='8px'; dot.style.height='8px'; dot.style.borderRadius='50%';
-        dot.style.left='50%'; dot.style.top='20%';
-        const colors=['#22c55e','#3b82f6','#f59e0b','#ef4444','#a855f7']; dot.style.background=colors[i%colors.length]; dot.style.zIndex=60;
-        const angle=(i/n)*Math.PI*2, dist=80+Math.random()*60, tx=Math.cos(angle)*dist, ty=Math.sin(angle)*dist;
-        const anim=dot.animate([
-          { transform:'translate(-50%,-50%) scale(1)', opacity:1 },
-          { transform:`translate(${tx-50}%,${ty-50}%) scale(.9)`, opacity:0 }
-        ], { duration: 900, easing:'cubic-bezier(.2,.8,.2,1)' });
-        anim.onfinish=()=>dot.remove(); root.appendChild(dot);
-      }
+    /* ===== Mistakes UI ===== */
+    function renderMistakes(){
+      showScreen('mistakesScreen');
+      el.mistakesList.innerHTML='';
+      if(!mistakes.length){ const d=document.createElement('div'); d.className='history-row'; d.style.color='var(--ink-soft)'; d.textContent='אין טעויות הפעם - כל הכבוד'; el.mistakesList.appendChild(d); return; }
+      mistakes.forEach(m=>{
+        const card=document.createElement('div'); card.className='topic-card';
+        const head=document.createElement('div'); head.style.display='flex'; head.style.justifyContent='space-between'; head.style.alignItems='center'; head.style.gap='10px';
+        const q=document.createElement('div'); q.style.fontWeight='900'; q.textContent=m.q;
+        const btn=document.createElement('button'); btn.type='button'; btn.className='ghost'; btn.textContent='הסבר קצר';
+        head.appendChild(q); head.appendChild(btn); card.appendChild(head);
+        const body=document.createElement('div'); body.style.display='none'; body.style.marginTop='8px'; body.style.fontSize='14px'; body.style.color='var(--ink-soft)';
+        const correct=document.createElement('div'); correct.innerHTML = 'תשובה נכונה: <span class="ltr" style="font-weight:900">'+m.correctText+'</span>';
+        const help=document.createElement('div'); help.textContent = (m.steps && m.steps.length) ? m.steps.join(' → ') : (m.hint || 'טיפ קצר: נסו לחשוב מה הכי הגיוני');
+        body.appendChild(correct); body.appendChild(help); card.appendChild(body);
+        btn.addEventListener('click', ()=>{ body.style.display = body.style.display==='none' ? 'block' : 'none'; });
+        el.mistakesList.appendChild(card);
+      });
     }
 
-    // הפעלה ראשונית + אירוע רענון מאגר
-    (async function init(){ await newSession(); })();
-    el.refreshBankBtn.addEventListener('click', async ()=>{ await refreshBank(); await newSession(); });
+    /* ===== Toast ו־קונפטי ===== */
+    let toastTimer=null; function toast(msg){ el.toastMsg.textContent=msg; el.toast.style.display='grid'; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{ el.toast.style.display='none'; }, 1800); }
+    function confetti(){ try{ if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; }catch{} const root=document.body; const n=28; for(let i=0;i<n;i++){ const dot=document.createElement('span'); dot.style.position='fixed'; dot.style.width='8px'; dot.style.height='8px'; dot.style.borderRadius='50%'; dot.style.left='50%'; dot.style.top='20%'; const colors=['#22c55e','#3b82f6','#f59e0b','#ef4444','#a855f7']; dot.style.background=colors[i%colors.length]; dot.style.zIndex=80; const angle=(i/n)*Math.PI*2, dist=80+Math.random()*60, tx=Math.cos(angle)*dist, ty=Math.sin(angle)*dist; const anim=dot.animate([{transform:'translate(-50%,-50%) scale(1)', opacity:1},{transform:`translate(${tx-50}%,${ty-50}%) scale(.9)`, opacity:0}],{duration:900, easing:'cubic-bezier(.2,.8,.2,1)'}); anim.onfinish=()=>dot.remove(); root.appendChild(dot); } }
+
+    /* ===== מודל בורר משתמשים ===== */
+    let lastFocusEl=null; let dialogKeyHandler=null;
+    function openUserPicker(){ buildUserList(); lastFocusEl=document.activeElement; el.userPicker.style.display='flex'; trapDialog(el.userPicker); }
+    function closeUserPicker(){ el.userPicker.style.display='none'; if(dialogKeyHandler){ el.userPicker.removeEventListener('keydown', dialogKeyHandler); dialogKeyHandler=null; } if(lastFocusEl && lastFocusEl.focus) lastFocusEl.focus(); }
+    function buildUserList(){ const arr=profilesArr(); el.userList.innerHTML=''; if(arr.length===0){ const p=document.createElement('div'); p.textContent='אין משתמשים שמורים'; p.style.color='var(--ink-soft)'; el.userList.appendChild(p); return; } arr.forEach(p=>{ const b=document.createElement('button'); b.type='button'; b.className='btn'; b.style.minHeight='44px'; b.textContent=p.name; b.addEventListener('click',()=>{ setActiveProfile(p.id); closeUserPicker(); renderProfile(); toast(`עברתם ל ${p.name}`); }); el.userList.appendChild(b); }); }
+    function trapDialog(modal){ function getF(){ return modal.querySelectorAll('button,[href],[tabindex]:not([tabindex="-1"])'); } function onKey(e){ if(e.key==='Escape'){ closeUserPicker(); } if(e.key!=='Tab') return; const f=[...getF()]; if(!f.length) return; const first=f[0], last=f[f.length-1]; if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); } else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); } } dialogKeyHandler=onKey; modal.addEventListener('keydown', onKey); setTimeout(()=>{ const f=modal.querySelector('button'); f && f.focus(); }, 0); }
+
+    /* ===== פרופיל - UI ===== */
+    function renderProfile(){ showScreen('profileScreen'); const prof=getActiveProfile(); const users=profilesArr().length; el.profileSwitchBtn.disabled=users<=1; el.profileSwitchBtn.classList.toggle('disabled', users<=1);
+      if(!prof){ el.profileHeader.textContent='אין משתמש פעיל. אפשר ליצור משתמש חדש או להחליף למשתמש קיים'; el.kpiSets.textContent='0'; el.kpiAccuracy.textContent='0%'; el.kpiAvg.textContent='0s'; el.byTopicGrid.innerHTML=''; el.historyList.innerHTML='<div class="history-row" style="color:var(--ink-soft)">אין היסטוריה עדיין</div>'; return; }
+      // XSS-safe
+      el.profileHeader.textContent = 'משתמש פעיל: ';
+      const strong = document.createElement('span'); strong.style.fontWeight='900'; strong.style.color='#111'; strong.textContent = prof.name; el.profileHeader.appendChild(strong);
+      const tot=prof.totals||{sets:0,questions:0,correct:0,timeSec:0,hints:0}; const acc=tot.questions? Math.round((tot.correct/tot.questions)*100) : 0; const avg=tot.questions? Math.round(tot.timeSec/tot.questions) : 0; el.kpiSets.textContent=String(tot.sets||0); el.kpiAccuracy.textContent=acc+'%'; el.kpiAvg.textContent=(avg||0)+'s';
+      const topics=prof.byTopic||{}; const labels={general:'כללי', waves:'גלים', optics:'אופטיקה', motion:'תנועה', electricity:'חשמל', gravity:'גרביטציה', pressure:'לחץ', buoyancy:'ציפה', thermo:'חום'};
+      el.byTopicGrid.innerHTML=''; Object.keys(labels).forEach(key=>{ const b=topics[key]; const q=b?.questions||0, c=b?.correct||0, a=q?Math.round(c/q*100):0; const card=document.createElement('div'); card.className='topic-card'; card.innerHTML=`<div style="font-weight:900; margin-bottom:6px">${labels[key]}</div><div style="font-size:12px; color:var(--ink-soft); margin-bottom:6px">שאלות: <span class="ltr">${q}</span></div><div class="progress" aria-hidden="true" style="height:8px"><div style="width:${a}%" class="bar"></div></div><div style="font-size:12px; color:var(--ink-soft); margin-top:6px">דיוק: <span class="ltr">${a}%</span></div>`; el.byTopicGrid.appendChild(card); });
+      const h=prof.history||[]; el.historyList.innerHTML=''; if(h.length===0){ el.historyList.innerHTML='<div class="history-row" style="color:var(--ink-soft)">אין היסטוריה עדיין</div>'; } else { h.slice(0,20).forEach(item=>{ const pct=Math.round(item.scorePct|| (item.correct/item.count*100)); const date=new Date(item.ts).toLocaleString('he-IL',{dateStyle:'short', timeStyle:'short'}); const row=document.createElement('div'); row.className='history-row'; row.innerHTML=`<div><div style="font-size:12px; color:var(--ink-soft)">${date}</div><div>שאלות: ${item.count} · זמן ממוצע: ${Math.max(1, Math.round(item.timeSec/item.count))}s · רמזים: ${item.hints}</div></div><div class="ltr" style="font-weight:900; ${pct===100?'color:#16a34a': pct>=60?'color:#2563eb':'color:#ea580c'}">${pct}%</div>`; el.historyList.appendChild(row); }); }
+    }
+
+    /* ===== חיווט אירועים ===== */
+    function bindAll(){
+      el.startBtn.addEventListener('click', ()=>{ showScreen('nameScreen'); el.nameInput.value=''; const prof=getActiveProfile(); if(prof){ el.nameInput.value=prof.name; el.nameSubtitle.textContent=`שלום ${prof.name}`; el.nameSubtitle.style.display='block'; } else { el.nameSubtitle.style.display='none'; } playTick(); });
+      el.nameNext.addEventListener('click', ()=>{ const v=(el.nameInput.value||'').trim(); if(!v){ alert('אנא כתבו שם'); el.nameInput.focus(); return; } ensureProfileByName(v); const prof=getActiveProfile(); el.greet.textContent=`שלום ${prof.name}`; newSession(); });
+      el.profileOrSwitchBtn.addEventListener('click', ()=>{ const arr=profilesArr(); if(arr.length>0) openUserPicker(); else renderProfile(); });
+
+      el.userPickerClose.addEventListener('click', closeUserPicker); el.newUserBtn.addEventListener('click', ()=>{ closeUserPicker(); el.nameInput.value=''; showScreen('nameScreen'); el.nameInput.focus(); });
+
+      el.profileBtn.addEventListener('click', renderProfile); el.profileFromResultsBtn.addEventListener('click', renderProfile); el.profileStartBtn.addEventListener('click', ()=>{ const prof=getActiveProfile(); if(!prof) { showScreen('nameScreen'); el.nameInput.focus(); } else { newSession(); } }); el.profileSwitchBtn.addEventListener('click', openUserPicker); el.profileNewBtn.addEventListener('click', ()=>{ store.activeId=null; saveStore(); showScreen('nameScreen'); el.nameInput.value=''; el.nameInput.focus(); });
+
+      el.retryBtn.addEventListener('click', ()=>{ if(!quizData.length) newSession(); else buildSessionFromLoadedBank(); playTick(); });
+      el.altBtn.addEventListener('click', async ()=>{ await refreshBank(); await newSession(); });
+      el.learnBtn.addEventListener('click', ()=>{ renderMistakes(); });
+
+      el.backToResults.addEventListener('click', ()=>{ showScreen('resultsScreen'); });
+      el.restartFromMistakes.addEventListener('click', ()=>{ showScreen('welcomeScreen'); });
+
+      el.refreshBankBtn.addEventListener('click', async ()=>{ await refreshBank(); await newSession(); });
+    }
+
+    /* ===== הפעלה ===== */
+    (async function init(){ storeInit(); bindAll(); showScreen('welcomeScreen'); })();
   </script>
 </body>
 </html>
