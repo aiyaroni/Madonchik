@@ -18,13 +18,9 @@
     body{font-family:'Assistant',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--ink)}
 
     .subhead{font-weight:600;font-size:clamp(1.05rem, .9rem + .7vw, 1.25rem); line-height:1.35; color:#374151}
-    .choice-card{
-      position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;
+    .choice-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;
       background:#fff; border:2px solid transparent; border-radius:1.25rem; padding:1.15rem;
-      box-shadow:var(--shadow); transition:.18s; cursor:pointer; outline:none; user-select:none; min-height:92px;
-      /* FIX: מניעת אפקטי מסכה/פייד לא רצויים בספארי/מובייל */
-      -webkit-mask-image:none; mask-image:none; background-clip:padding-box; -webkit-background-clip:padding-box; isolation:isolate;
-    }
+      box-shadow:var(--shadow); transition:.18s; cursor:pointer; outline:none; user-select:none; min-height:92px}
     .choice-card:hover{transform:translateY(-2px)}
     .choice-card:active{transform:scale(.98)}
     .choice-card.selected{border-color:#2563eb; box-shadow:0 12px 30px rgba(0,0,0,.18)}
@@ -120,7 +116,7 @@
     </div>
   </div>
 
-  <!-- Topics -->
+  <!-- Topics (merged groups) -->
   <div id="topicsScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-4xl w-full">
       <div class="text-5xl mb-4">📚</div>
@@ -143,7 +139,7 @@
   <div id="programScreen" class="hidden flex flex-col items-center justify-center min-h-screen p-6">
     <div class="text-center bg-white rounded-3xl shadow-2xl p-8 max-w-xl w-full">
       <div class="text-5xl mb-4">🎯</div>
-      <h2 class="text-3xl md:text-4ל font-extrabוד text-indigo-600 mb-2">איזו תכנית לימוד מתאימה?</h2>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-indigo-600 mb-2">איזו תכנית לימוד מתאימה?</h2>
       <p class="subhead mb-6">בחרו את הכיתה שלכם</p>
 
       <!-- תמיד 2×2 -->
@@ -301,7 +297,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" id="byTopicGrid"></div>
 
       <div>
-        <h3 class="text-2xl font-extrabold text-gray-800 mb-3">היסטוריית סטים</h3>
+        <h3 class="text-2ל font-extrabוד text-gray-800 mb-3">היסטוריית סטים</h3>
         <div id="historyList" class="space-y-2"></div>
       </div>
     </div>
@@ -313,7 +309,7 @@
     let playerName = '', questionCount = 6;
     let currentQuestionIndex = 0, correctCount = 0, totalQuestions = 6;
     let questions = [], selectedAnswer = null, startTime = 0, totalTime = 0;
-    let wrongAnswers = []; // למסך "למד מהטעויות"
+    let wrongAnswers = [];
 
     const STORE_KEY='mdnc_profiles_v2';
     const RECENT_KEY='mdnc_recent_ids_v2';
@@ -393,7 +389,6 @@
     const $=sel=>document.querySelector(sel);
     const $$=sel=>document.querySelectorAll(sel);
     function shuffle(a){const c=a.slice();for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}return c}
-    function sample(arr){ return arr && arr.length ? arr[Math.floor(Math.random()*arr.length)] : null; }
     function focusTop(selector){
       const el=typeof selector==='string'?document.querySelector(selector):selector;
       const target=el||document.body;
@@ -402,23 +397,19 @@
     }
     function updateStatus(msg){ const el=$('#statusMsg'); if(el) el.textContent=msg||''; }
     const onlyDigitsLatin = (s)=>/^[0-9A-Za-z .,:;'"()\-+/*]+$/.test(s||'');
+    const hasHebrew = (s)=>/[\u0590-\u05FF]/.test(s||'');
 
     /* ========= Screens ========= */
     const SCREENS=['welcomeScreen','nameScreen','topicsScreen','programScreen','settingsScreen','gameScreen','resultsScreen','mistakesScreen','profileScreen'];
     function showScreen(id){ SCREENS.forEach(s=>$('#'+s)?.classList.add('hidden')); $('#'+id)?.classList.remove('hidden'); window.scrollTo({top:0,left:0,behavior:'auto'}); }
 
-    /* ========= Topics & Programs ========= */
-    const Topics = [
-      {key:'motion', label:'תנועה וכוח', emoji:'🏃‍♂️'},
-      {key:'gravity', label:'כוח המשיכה', emoji:'🪨'},
-      {key:'light', label:'אור וצל', emoji:'💡'},
-      {key:'sound', label:'קול וגלים', emoji:'🔊'},
-      {key:'electric', label:'חשמל ומעגלים', emoji:'⚡'},
-      {key:'matter', label:'חומר ומצבי צבירה', emoji:'🧊'},
-      {key:'energy', label:'אנרגיה וחום', emoji:'🔥'},
-      {key:'space', label:'כדור הארץ והחלל', emoji:'🪐'},
-      {key:'measure', label:'מדידות וכלים', emoji:'📏'},
-      {key:'magnet', label:'מגנטים', emoji:'🧲'},
+    /* ========= Topics (display groups) & underlying content keys ========= */
+    // הצגה למשתמש — 4 קטגוריות מאוחדות
+    const TopicGroups = [
+      {key:'mech', label:'תנועה, כוח ומגנטים', emoji:'🏃‍♂️', topics:['motion','gravity','magnet']},
+      {key:'waves', label:'אור וקול', emoji:'💡', topics:['light','sound']},
+      {key:'matter_energy', label:'חומר, אנרגיה ומדידות', emoji:'🧪', topics:['matter','energy','measure']},
+      {key:'space', label:'כדור הארץ והחלל', emoji:'🪐', topics:['space']},
     ];
 
     const Programs = [
@@ -428,248 +419,136 @@
       {key:'p4', label:'ה-ז', emoji:'🧪'},
     ];
 
-    /* ========= FACTS Bank (נושא + כיתה + רמות קושי עם ניסוחים) ========= */
-    const FACTS = [
-      /* Gravity */
-      { id:'grav_pull', topic:'gravity', programs:['p1','p2','p3','p4'], group:'gravity_terms', correct:'כוח המשיכה',
-        explain:'כוח שמושך חפצים אל מרכז כדור הארץ.',
-        stems:{ easy:['מה מושך חפצים אל הקרקע?'], medium:['למה כדור שנזרק למעלה חוזר למטה?'], hard:['איזה כוח מסביר נפילה חופשית של גוף?'] }
-      },
+    // מאגר שאלות (מדויק ושפוי). אפשר להרחיב בהמשך.
+    const SEED = [
+      // Gravity
+      {id:'grav_1', topic:'gravity', level:'easy', templates:['מה מושך חפצים אל הקרקע?'], choices:['חיכוך','כוח המשיכה','מגנטיות','רוח'], correct:1, hint:'כוח שמושך הכול אל מרכז כדור הארץ.'},
+      {id:'grav_2', topic:'gravity', level:'medium', templates:['למה כדור שנזרק למעלה חוזר למטה?'], choices:['כי אין אוויר','כוח המשיכה מחזיר אותו','בגלל אור','כי הוא קל'], correct:1, hint:'כוח המשיכה פועל תמיד כלפי מטה.'},
 
-      /* Motion */
-      { id:'motion_friction', topic:'motion', programs:['p1','p2','p3','p4'], group:'motion_forces', correct:'חיכוך',
-        explain:'הכוח שמתנגד לתנועה בין משטחים.',
-        stems:{ easy:['איזה כוח מאט תנועה על הקרקע?'], medium:['עגלה נסעה ונעצרה לבד. מה גרם לה לעצור?'], hard:['החלקה יורדת עם הזמן על משטח מחוספס. מה הסיבה?'] }
-      },
-      { id:'motion_parachute', topic:'motion', programs:['p2','p3','p4'], group:'motion_drag', correct:'גרר אוויר',
-        explain:'שטח גדול יוצר התנגדות אוויר שמאטת את הנפילה.',
-        stems:{ easy:['מה גורם למצנח להאט נפילה?'], medium:['צנחן פותח מצנח ומאט. איזה כוח פועל עליו?'], hard:['איך הגדלת שטח החתך משפיעה על מהירות נפילה באוויר?'] }
-      },
+      // Motion
+      {id:'mot_1', topic:'motion', level:'easy', templates:['איזה כוח מאט תנועה על הקרקע?'], choices:['חיכוך','כוח המשיכה','ציפה','חשמל'], correct:0, hint:'הכוח שמתנגד לתנועה נקרא חיכוך.'},
+      {id:'mot_2', topic:'motion', level:'medium', templates:['עגלה נוסעת ונעצרת לבד. מה גרם לה לעצור?'], choices:['חיכוך באוויר ובגלגלים','גרביטציה חלשה','חום השמש','אור חזק'], correct:0, hint:'החיכוך עם הקרקע והאוויר מוריד מהירות.'},
 
-      /* Light */
-      { id:'light_speed', topic:'light', programs:['p1','p2','p3','p4'], group:'light_speed', correct:'אור מהיר יותר',
-        explain:'האור נע מהר בהרבה מהקול, לכן אנו רואים ברק לפני ששומעים רעם.',
-        stems:{ easy:['למה רואים ברק לפני ששומעים רעם?'], medium:['מי נע מהר יותר באוויר: אור או קול?'], hard:['איזו תופעה מסבירה ראיית הברק לפני הרעם?'] }
-      },
-      { id:'light_refraction_color', topic:'light', programs:['p3','p4'], group:'color_refraction', correct:'סגול',
-        explain:'בקצה הסגלגל של הספקטרום השבירה חזקה יותר ולכן הסטייה גדולה יותר.',
-        stems:{ easy:['איזה צבע נשבר הכי הרבה במים?'], medium:['באור לבן העובר בפריזמה: איזה צבע מתעקם יותר?'], hard:['בקשת צבעים, איזה צבע עובר סטייה זוויתית גדולה יותר?'] }
-      },
-      { id:'light_behavior', topic:'light', programs:['p1','p2','p3','p4'], group:'light_behave', correct:'מוחזר',
-        explain:'במראה רוב האור מוחזר.',
-        stems:{ easy:['מה קורה לאור כאשר הוא פוגע במראה?'], medium:['אור הפוגע במשטח מבריק: מה יקרה בעיקר?'], hard:['איזו תופעה דומיננטית במראה מושלמת?'] }
-      },
+      // Light
+      {id:'light_1', topic:'light', level:'easy', templates:['למה רואים ברק לפני ששומעים רעם?'], choices:['קול מהיר יותר','אור מהיר יותר','זה קורה יחד','תלוי בעננים'], correct:1, hint:'האור נע מהר יותר מהקול.'},
+      {id:'light_2', topic:'light', level:'medium', templates:['איזה צבע נשבר הכי הרבה במים?'], choices:['אדום','ירוק','כחול','סגול'], correct:3, hint:'צד הסגול בקשת נשבר יותר במים.'},
 
-      /* Sound */
-      { id:'sound_amplitude', topic:'sound', programs:['p1','p2','p3','p4'], group:'sound_amp', correct:'הקול חזק יותר',
-        explain:'אמפליטודה גבוהה יותר = עוצמה גבוהה יותר, לא גובה צליל.',
-        stems:{ easy:['כשמעלים את עוצמת הצליל מה קורה?'], medium:['אם אמפליטודת גל הקול גדלה: מה יקרה?'], hard:['מה הקשר בין אמפליטודה של קול לתחושת החוזק?'] }
-      },
-      { id:'sound_medium', topic:'sound', programs:['p2','p3','p4'], group:'sound_medium', correct:'חומר כמו אוויר או מים',
-        explain:'קול הוא גל מכני וזקוק לתווך חומרי.',
-        stems:{ easy:['קול נע דרך מה?'], medium:['האם קול יכול לנוע בריק מוחלט?'], hard:['למה קול אינו מתקדם בחלל ריק?'] }
-      },
+      // Sound
+      {id:'snd_1', topic:'sound', level:'easy', templates:['כשמעלים את עוצמת הצליל – מה קורה?'], choices:['הצליל גבוה יותר','הקול חזק יותר','מהירות משתנה','הכול יחד'], correct:1, hint:'אמפליטודה = גובה הגל, קשורה לעוצמה.'},
+      {id:'snd_2', topic:'sound', level:'medium', templates:['קול נע דרך מה?'], choices:['ריק מוחלט בלבד','חומר כמו אוויר או מים','רק מתכת','רק חוטים'], correct:1, hint:'קול הוא גל מכני וצריך תווך חומרי.'},
 
-      /* Electricity */
-      { id:'elec_closed', topic:'electric', programs:['p1','p2','p3','p4'], group:'elec_closed', correct:'הנורה תדלק',
-        explain:'במעגל סגור הזרם זורם והנורה נדלקת.',
-        stems:{ easy:['במעגל סגור עם סוללה ונורה, מה יקרה?'], medium:['סגרנו מתג במעגל עם נורה. מה צפוי?'], hard:['מה התנאי להדלקת נורה במעגל פשוט?'] }
-      },
-      { id:'elec_open', topic:'electric', programs:['p1','p2','p3','p4'], group:'elec_open', correct:'חסר מעגל סגור',
-        explain:'במעגל פתוח אין זרם ולכן הנורה לא דולקת.',
-        stems:{ easy:['מדוע נורה לא דולקת במעגל פתוח?'], medium:['במעגל עם נתק: מה יקרה לזרם?'], hard:['מה הסיבה לאי זרימת זרם כאשר יש הפסקה במוליך?'] }
-      },
+      // Electric
+      {id:'elec_1', topic:'electric', level:'easy', templates:['במעגל סגור עם סוללה ונורה – מה יקרה?'], choices:['שום דבר','הנורה תדלק','הסוללה נעלמת','יהיה צליל'], correct:1, hint:'זרם עובר במעגל סגור והנורה נדלקת.'},
+      {id:'elec_2', topic:'electric', level:'medium', templates:['מדוע נורה לא דולקת במעגל פתוח?'], choices:['חסר מעגל סגור','כבל עבה חסר','צריך שתי סוללות','צריך מתג חכם'], correct:0, hint:'הזרם זורם רק כשיש מעגל סגור.'},
 
-      /* Matter & Phase changes — ללא חיצים; “מ… ל…” */
-      { id:'thermometer', topic:'matter', programs:['p1','p2','p3','p4'], group:'matter_thermo', correct:'טמפרטורה',
-        explain:'מדחום מודד כמה חם או קר — את הטמפרטורה.',
-        stems:{ easy:['מה מודד מדחום?'], medium:['איזו כמות פיזיקלית נמדדת במדחום?'], hard:['מדחום נועד למדוד את הטמפרטורה.'] }
-      },
-      { id:'density_float', topic:'matter', programs:['p2','p3','p4'], group:'matter_density', correct:'צפיפות נמוכה ממים',
-        explain:'גוף יצוף אם הצפיפות הממוצעת שלו נמוכה מזו של הנוזל.',
-        stems:{ easy:['מה קובע אם ספינה תצוף?'], medium:['מתי גוף יצוף על פני מים?'], hard:['איזה תנאי בצפיפות מאפשר ציפה במים?'] }
-      },
+      // Matter
+      {id:'mat_1', topic:'matter', level:'easy', templates:['מה מודד מדחום?'], choices:['טמפרטורה','מסה','לחץ','מהירות'], correct:0, hint:'כמה חם או קר.'},
+      {id:'mat_2', topic:'matter', level:'medium', templates:['מה קובע אם ספינה תצוף?'], choices:['משקל קטן','צפיפות נמוכה ממים','מנוע חזק','מגנטים'], correct:1, hint:'אם הצפיפות הממוצעת נמוכה מזו של מים – הספינה צפה.'},
 
-      /* מעברי מצב צבירה */
-      { id:'phase_melt', topic:'matter', programs:['p1','p2','p3','p4'], group:'matter_states', correct:'התכה',
-        explain:'מעבר ממוצק לנוזל נקרא התכה.',
-        stems:{ easy:['מה שמו של מעבר ממוצק לנוזל?'], medium:['איך נקרא תהליך חימום קרח עד שהוא הופך לנוזל?'], hard:['מהו השם המדעי למעבר ממצב מוצק לנוזל?'] }
-      },
-      { id:'phase_freeze', topic:'matter', programs:['p1','p2','p3','p4'], group:'matter_states', correct:'קיפאון',
-        explain:'מעבר מנוזל למוצק נקרא קיפאון (קפיאה).',
-        stems:{ easy:['איך נקרא המעבר מנוזל למוצק?'], medium:['מים שהופכים לקרח: מה שם התהליך?'], hard:['מהו השם למעבר ממצב נוזל למוצק?'] }
-      },
-      { id:'phase_evap', topic:'matter', programs:['p2','p3','p4'], group:'matter_states', correct:'התאיידות',
-        explain:'מעבר מנוזל לגז נקרא התאיידות (או רתיחה בתנאים מסוימים).',
-        stems:{ easy:['איך נקרא המעבר מנוזל לגז?'], medium:['מים שהופכים לאדים: מה שם התהליך?'], hard:['מהו המעבר ממצב נוזל לגז?'] }
-      },
-      { id:'phase_cond', topic:'matter', programs:['p2','p3','p4'], group:'matter_states', correct:'עיבוי',
-        explain:'מעבר מגז לנוזל נקרא עיבוי.',
-        stems:{ easy:['איך נקרא המעבר מגז לנוזל?'], medium:['אדי מים שהופכים לטיפות: מה שם התהליך?'], hard:['מהו המעבר ממצב גז לנוזל?'] }
-      },
-      { id:'phase_subl', topic:'matter', programs:['p3','p4'], group:'matter_states', correct:'סובלימציה',
-        explain:'מעבר ממוצק לגז בלי להפוך לנוזל באמצע.',
-        stems:{ easy:['איך נקרא מעבר ממוצק ישירות לגז?'], medium:['יוד שעובר ממוצק לגז: מה שם התהליך?'], hard:['מהו השם המדעי למעבר ממצב מוצק לגז ללא ביניים?'] }
-      },
-      { id:'phase_depo', topic:'matter', programs:['p3','p4'], group:'matter_states', correct:'ריבוץ',
-        explain:'מעבר מגז למוצק בלי להיות נוזל באמצע.',
-        stems:{ easy:['איך נקרא מעבר מגז ישירות למוצק?'], medium:['אדים שהופכים לקרח בלי שלב נוזלי: מה שם התהליך?'], hard:['מהו המעבר ממצב גז למוצק ללא שלב נוזלי?'] }
-      },
-      { id:'clouds', topic:'matter', programs:['p1','p2','p3','p4'], group:'matter_cloud', correct:'גז וטיפות זעירות',
-        explain:'ענן הוא אדי מים וטיפות זעירות באוויר.',
-        stems:{ easy:['ממה עשוי ענן בעיקר?'], medium:['מה המרכיב העיקרי בעננים?'], hard:['ענן הוא תערובת של אדי מים וטיפות זעירות באוויר.'] }
-      },
+      // Energy
+      {id:'eng_1', topic:'energy', level:'easy', templates:['איזו אנרגיה יש לתנועה?'], choices:['קינטית','חשמלית','תרמית','אלסטית'], correct:0, hint:'אנרגיית תנועה נקראת אנרגיה קינטית.'},
+      {id:'eng_2', topic:'energy', level:'medium', templates:['איזו אנרגיה נאגרת בקפיץ דחוס?'], choices:['קינטית','פוטנציאלית אלסטית','תרמית','חשמלית'], correct:1, hint:'אנרגיה נאגרת כאלסטית ומשתחררת בעבודה.'},
 
-      /* Energy */
-      { id:'energy_kin', topic:'energy', programs:['p1','p2','p3','p4'], group:'energy_types', correct:'קינטית',
-        explain:'אנרגיית תנועה נקראת אנרגיה קינטית.',
-        stems:{ easy:['איזו אנרגיה יש לתנועה?'], medium:['מה שמה של אנרגיית התנועה?'], hard:['אנרגיית תנועה נקראת אנרגיה קינטית.'] }
-      },
-      { id:'energy_elastic', topic:'energy', programs:['p2','p3','p4'], group:'energy_types', correct:'פוטנציאלית אלסטית',
-        explain:'בקפיץ דחוס נאגרת אנרגיה פוטנציאלית אלסטית.',
-        stems:{ easy:['איזו אנרגיה נאגרת בקפיץ דחוס?'], medium:['קפיץ נמתח: איזו אנרגיה נאגרת בו?'], hard:['איזה סוג אנרגיה מאפיין אלסטיות?'] }
-      },
-      { id:'gas_heat', topic:'energy', programs:['p2','p3','p4'], group:'gas_heat', correct:'מתרחב',
-        explain:'חימום גז מגדיל את האנרגיה ואת הנפח (בתנאי לחץ קבוע).',
-        stems:{ easy:['מה קורה לנפח גז כשמחממים אותו?'], medium:['גז מחומם בלחץ קבוע: מה קורה לנפח?'], hard:['איך משפיע חימום על נפח גז?'] }
-      },
+      // Space
+      {id:'spc_1', topic:'space', level:'easy', templates:['למה השמש נראית גדולה בשקיעה?'], choices:['האוויר מעקם אור','השמש מתקרבת','הירח מסתיר','השמש גדלה'], correct:0, hint:'האטמוספירה שוברת את האור.'},
+      {id:'spc_2', topic:'space', level:'medium', templates:['מה מקור האנרגיה לרוח?'], choices:['השמש מחממת לא אחיד','הירח','מגנטים','רעש'], correct:0, hint:'הבדלי טמפרטורה ולחץ יוצרים רוחות.'},
 
-      /* Space / Earth */
-      { id:'sunset', topic:'light', programs:['p1','p2','p3','p4'], group:'space_sunset', correct:'האוויר מעקם אור',
-        explain:'האטמוספירה שוברת אור ויוצרת אשליה שהשמש גדולה יותר בשקיעה.',
-        stems:{ easy:['למה השמש נראית גדולה בשקיעה?'], medium:['איזו תופעה אופטית גורמת למראה שמש גדולה בשקיעה?'], hard:['שבירת אור באטמוספירה מסבירה את המראה של שמש גדולה בשקיעה.'] }
-      },
-      { id:'wind', topic:'space', programs:['p2','p3','p4'], group:'wind_source', correct:'השמש מחממת לא אחיד',
-        explain:'הבדלי חימום יוצרים הבדלי לחץ שמניעים רוחות.',
-        stems:{ easy:['מה מקור האנרגיה לרוח?'], medium:['מדוע נוצרת רוח על פני כדור הארץ?'], hard:['הבדלי טמפרטורה ולחץ באטמוספירה גורמים לרוחות.'] }
-      },
+      // Measure
+      {id:'msr_1', topic:'measure', level:'easy', templates:['מהי יחידת המסה במערכת SI?'], choices:['ניוטון','קילוגרם','מטר','אמפר'], correct:1, hint:'קילוגרם הוא יחידת המסה.'},
+      {id:'msr_2', topic:'measure', level:'medium', templates:['באיזה כלי מודדים אורך מחברת?'], choices:['מד חום','סרגל או מטר','מאוורר','שנאי'], correct:1, hint:'למדוד אורך משתמשים בסרגל או במטר.'},
 
-      /* Measurement */
-      { id:'si_mass', topic:'measure', programs:['p1','p2','p3','p4'], group:'measure_mass_SI', correct:'קילוגרם',
-        explain:'קילוגרם היא יחידת המסה במערכת SI.',
-        stems:{ easy:['מהי יחידת המסה במערכת SI?'], medium:['איזו יחידה מודדת מסה ב-SI?'], hard:['יחידת המסה הסטנדרטית נקראת קילוגרם.'] }
-      },
-      { id:'si_force', topic:'measure', programs:['p3','p4'], group:'measure_force_SI', correct:'ניוטון',
-        explain:'ניוטון היא יחידת הכוח במערכת SI.',
-        stems:{ easy:['מהי יחידת הכוח במערכת SI?'], medium:['איזו יחידה מודדת כוח?'], hard:['כוח נמדד ביחידות ניוטון.'] }
-      },
-      { id:'ruler', topic:'measure', programs:['p1','p2','p3','p4'], group:'measure_ruler', correct:'סרגל או מטר',
-        explain:'למדידת אורך משתמשים בסרגל/מטר.',
-        stems:{ easy:['באיזה כלי מודדים אורך מחברת?'], medium:['איזה כלי מתאים למדידת אורך שולחן?'], hard:['מדידת אורך נעשית באמצעות סרגל או מטר.'] }
-      },
+      // Magnet
+      {id:'mag_1', topic:'magnet', level:'easy', templates:['מה מושך סיכות ברזל?'], choices:['מגנט','כוס מים','בלון','נייר'], correct:0, hint:'מגנט מושך ברזל וחומרים מגנטיים.'},
+      {id:'mag_2', topic:'magnet', level:'medium', templates:['מה קורה בין קטבים זהים של מגנט?'], choices:['משיכה','דחייה','שום דבר','התחממות'], correct:1, hint:'זהה דוחה זהה, שונה מושך.'},
 
-      /* Magnetism */
-      { id:'magnet_pull', topic:'magnet', programs:['p1','p2','p3','p4'], group:'magnet_basic', correct:'מגנט',
-        explain:'מגנט מושך חומרים פרומגנטיים כגון ברזל.',
-        stems:{ easy:['מה מושך סיכות ברזל?'], medium:['איזה חפץ ימשוך שבבי ברזל?'], hard:['איזה עצם מפעיל כוח משיכה על ברזל?'] }
-      },
-      { id:'magnet_poles', topic:'magnet', programs:['p1','p2','p3','p4'], group:'magnet_poles', correct:'דחייה',
-        explain:'קוטבים זהים דוחים, שונים מושכים.',
-        stems:{ easy:['מה קורה בין קטבים זהים של מגנט?'], medium:['מה קורה כאשר מקרבים N ל-N?'], hard:['מפגש בין קטבים זהים יוצר דחייה.'] }
-      }
+      // Extras
+      {id:'air_1', topic:'motion', level:'easy', templates:['מה גורם למצנח להאט נפילה?'], choices:['גרר אוויר','מנוע','מגנט','ציפה'], correct:0, hint:'שטח גדול מגדיל גרר ומאט.'},
+      {id:'liq_1', topic:'matter', level:'easy', templates:['ממה עשוי ענן בעיקר?'], choices:['נוזל','גז וטיפות זעירות','קרח גדול','פלזמה'], correct:1, hint:'אדי מים וטיפות זעירות.'},
+      {id:'fl_1', topic:'energy', level:'medium', templates:['מה קורה לנפח גז כשמחממים אותו?'], choices:['מתכווץ','מתרחב','נעלם','הופך למים'], correct:1, hint:'חימום מגדיל אנרגיה ומרחיב.'},
     ];
 
-    /* מסיחים נוספים לפי קבוצת ידע (למקרה שמעט פריטים בקבוצה) */
-    const EXTRA_DISTRACTORS = {
-      gravity_terms: ['מגנטיות','חיכוך','רוח','חשמל סטטי','לחץ אוויר'],
-      motion_forces: ['גרר אוויר','כוח המשיכה','דחף','מתיחה','תנופה'],
-      motion_drag: ['חיכוך','ציפה','מתיחה','דחף'],
-      light_speed: ['קול מהיר יותר','זה קורה יחד','תלוי בעננים','אוויר חם'],
-      color_refraction: ['אדום','ירוק','כחול'],
-      light_behave: ['נבלע','נשבר','מפוזר'],
-      sound_amp: ['הצליל גבוה יותר','מהירות משתנה','הכול יחד'],
-      sound_medium: ['ריק מוחלט בלבד','רק מתכת','רק חוטים'],
-      elec_closed: ['שום דבר','הסוללה נעלמת','יהיה צליל'],
-      elec_open: ['צריך שתי סוללות','כבל עבה חסר','צריך מתג חכם'],
-      matter_thermo: ['מסה','לחץ','מהירות'],
-      matter_density: ['משקל קטן','מנוע חזק','מגנטים'],
-      matter_states: ['התכה','קיפאון','התאיידות','עיבוי','סובלימציה','ריבוץ'],
-      matter_cloud: ['נוזל','קרח גדול','פלזמה'],
-      energy_types: ['חשמלית','תרמית','אלסטית'],
-      gas_heat: ['מתכווץ','נעלם','הופך למים'],
-      space_sunset: ['השמש מתקרבת','הירח מסתיר','השמש גדלה'],
-      wind_source: ['הירח','מגנטים','רעש'],
-      measure_mass_SI: ['ניוטון','מטר','אמפר'],
-      measure_force_SI: ['קילוגרם','פסקל','ג׳אול'],
-      measure_ruler: ['מד חום','מאוורר','שנאי'],
-      magnet_basic: ['כוס מים','בלון','נייר'],
-      magnet_poles: ['משיכה','שום דבר','התחממות']
-    };
-    const GENERIC_DISTRACTORS = ['חום','קור','אור','צל','מים','אדמה','מתכת'];
+    function expandBank(seed){
+      const out=[];
+      seed.forEach(s=>{
+        const variants = s.templates && s.templates.length ? s.templates : [s.q];
+        variants.forEach((qtxt, idx)=>{
+          out.push({
+            id: s.id + '_v' + idx,
+            conceptId: s.id,
+            topic: s.topic,
+            level: s.level,
+            q: qtxt,
+            choices: s.choices.slice(),
+            correct: s.correct,
+            hint: s.hint || '',
+          });
+        });
+      });
+      return out;
+    }
+    const BIG_BANK = expandBank(SEED);
 
-    /* ========= Recent-avoid ========= */
     function getRecentIds(){
       try{ const arr=JSON.parse(sessionStorage.getItem(RECENT_KEY)||'[]'); return Array.isArray(arr)?arr:[]; }catch{ return []; }
     }
     function pushRecentIds(ids){
       try{
         const cur=getRecentIds();
-        const merged=[...ids, ...cur].slice(0, 200);
+        const merged=[...ids, ...cur].slice(0, 120);
         sessionStorage.setItem(RECENT_KEY, JSON.stringify(merged));
       }catch{}
     }
 
-    /* ========= Bank → Questions ========= */
-    function stemsForDiff(fact, diff){
-      if(!fact.stems) return [];
-      if(diff==='easy') return fact.stems.easy || fact.stems.medium || fact.stems.hard || [];
-      if(diff==='medium') return fact.stems.medium || fact.stems.easy || fact.stems.hard || [];
-      return fact.stems.hard || fact.stems.medium || fact.stems.easy || [];
-    }
-    function pickStem(fact, diff){
-      const arr = stemsForDiff(fact, diff);
-      return sample(arr) || '';
-    }
-    function buildChoicesForFact(fact){
-      const pool = new Set();
-      // כל התשובות התקינות האחרות בקבוצה
-      FACTS.filter(f=>f.group===fact.group && f.correct!==fact.correct).forEach(f=>pool.add(f.correct));
-      // הזרקה מקבוצת המסיחים הנוספת
-      (EXTRA_DISTRACTORS[fact.group]||[]).forEach(s=>pool.add(s));
-      // נקה אפשרות זהה לתשובה נכונה
-      pool.delete(fact.correct);
-      // בחר 3 מסיחים
-      const arr = shuffle([...pool]).slice(0,3);
-      while(arr.length<3){
-        const g = sample(GENERIC_DISTRACTORS);
-        if(g && g!==fact.correct && !arr.includes(g)) arr.push(g);
-        if(arr.length>20) break;
-      }
-      const options = shuffle([fact.correct, ...arr].slice(0,4));
-      const correctIndex = options.indexOf(fact.correct);
-      return { options, correctIndex };
-    }
-
-    function filterFacts(topicsSel, programKey){
-      return FACTS.filter(f=> topicsSel.has(f.topic) && f.programs.includes(programKey));
-    }
-
-    function buildCandidateQuestions(topicsSel, programKey, diff){
-      const facts = filterFacts(topicsSel, programKey);
-      const qs = [];
-      facts.forEach(f=>{
-        const stem = pickStem(f, diff);
-        if(!stem) return;
-        const {options, correctIndex} = buildChoicesForFact(f);
-        if(options.length<4 || correctIndex<0) return;
-        qs.push({
-          id: f.id + '_' + diff,
-          conceptId: f.id,
-          topic: f.topic,
-          level: diff,
-          q: stem,
-          choices: options,
-          correct: correctIndex,
-          hint: f.explain || ''
-        });
+    /* ===== Topic resolution & pool building (no alerts) ===== */
+    function resolvedUnderlyingTopics(selSet){
+      // המרה של בחירת הקבוצות לנושאי־תוכן אמיתיים
+      const keys=[...selSet];
+      const all = new Set();
+      keys.forEach(k=>{
+        const g = TopicGroups.find(t=>t.key===k);
+        if(g) g.topics.forEach(t=>all.add(t));
       });
-      return qs;
+      // אם משום מה לא נבחרה קבוצה, נחזיר הכול
+      if(all.size===0){
+        TopicGroups.forEach(g=>g.topics.forEach(t=>all.add(t)));
+      }
+      return all;
     }
 
-    function buildUniqueSet(requiredCount, topicsSel, diff, programKey){
+    function filterByTopicsAndDiff(bank, topicsUnderlying, diff){
+      return bank.filter(q => topicsUnderlying.has(q.topic) && (diff ? q.level===diff : true));
+    }
+
+    function buildPoolWithFallback(requiredCount, selectedGroups, diff){
+      const topicsUnderlying = resolvedUnderlyingTopics(selectedGroups);
+
+      // 1) לפי נושא+קושי
+      let pool = filterByTopicsAndDiff(BIG_BANK, topicsUnderlying, diff);
+
+      // 2) אם חסר – אותו נושא, בלי קושי
+      if(pool.length < requiredCount){
+        pool = pool.concat(filterByTopicsAndDiff(BIG_BANK, topicsUnderlying, null));
+      }
+      // 3) אם עדיין חסר – כל הנושאים באותה רמת קושי
+      if(pool.length < requiredCount && diff){
+        pool = pool.concat(BIG_BANK.filter(q => q.level===diff));
+      }
+      // 4) אם עדיין חסר – כל המאגר
+      if(pool.length < requiredCount){
+        pool = pool.concat(BIG_BANK);
+      }
+
+      // ייחוד לפי conceptId
+      const seen=new Set(); const unique=[];
+      shuffle(pool).forEach(q=>{
+        if(!seen.has(q.conceptId)){ seen.add(q.conceptId); unique.push(q); }
+      });
+      return unique;
+    }
+
+    function buildUniqueSet(requiredCount, selectedGroups, diff){
       const recent = new Set(getRecentIds());
-      // בונים מאגר מועמדים ומערבבים
-      const pool = shuffle(buildCandidateQuestions(topicsSel, programKey, diff));
+      const pool = buildPoolWithFallback(requiredCount*4, selectedGroups, diff);
       const selected = [];
       const usedConcept = new Set();
 
@@ -680,31 +559,23 @@
         selected.push(q);
         usedConcept.add(q.conceptId);
       }
-      // אם חסר – ממלאים בלי לבדוק recent
-      for(const q of pool){
-        if(selected.length >= requiredCount) break;
-        if(usedConcept.has(q.conceptId)) continue;
-        selected.push(q);
-        usedConcept.add(q.conceptId);
-      }
-      // אם עדיין חסר – fallback מכל הבנק (אותו diff, בלי סינון תוכנית)
       if(selected.length < requiredCount){
-        const extra = shuffle(FACTS.filter(f=>topicsSel.has(f.topic))).map(f=>{
-          const stem = pickStem(f, diff);
-          const {options, correctIndex} = buildChoicesForFact(f);
-          return {
-            id:f.id+'_'+diff+'_x', conceptId:f.id, topic:f.topic, level:diff,
-            q: stem, choices: options, correct: correctIndex, hint: f.explain||''
-          };
-        }).filter(q=>q.q && q.choices && q.choices.length===4);
-        for(const q of extra){
+        for(const q of pool){
           if(selected.length >= requiredCount) break;
           if(usedConcept.has(q.conceptId)) continue;
-          selected.push(q); usedConcept.add(q.conceptId);
+          selected.push(q);
+          usedConcept.add(q.conceptId);
         }
       }
+      // אין התראות; תמיד נשלים עד requiredCount
       if(selected.length < requiredCount){
-        alert('אין מספיק שאלות תואמות בחירה. נסו לבחור עוד נושאים או רמת קושי אחרת.');
+        const rest=[];
+        const seen = new Set(selected.map(x=>x.conceptId));
+        for(const q of BIG_BANK){
+          if(rest.length + selected.length >= requiredCount) break;
+          if(!seen.has(q.conceptId)){ rest.push(q); seen.add(q.conceptId); }
+        }
+        return selected.concat(rest).slice(0, requiredCount);
       }
       return selected.slice(0, requiredCount);
     }
@@ -712,7 +583,7 @@
     /* ========= Rendering ========= */
     function renderTopics(){
       const grid=$('#topicsGrid'); grid.innerHTML='';
-      Topics.forEach(t=>{
+      TopicGroups.forEach(t=>{
         const b=document.createElement('button');
         b.type='button'; b.className='choice-card'; b.setAttribute('data-topic', t.key);
         b.setAttribute('aria-pressed','false');
@@ -731,10 +602,12 @@
     function refreshTopicsOverflow(){
       const grid = $('#topicsGrid'), more = $('#topicsMore'), fade = $('#topicsFade');
       if(!grid||!more||!fade) return;
+
       const all = [...grid.children];
       const visible = all.filter(el => el.offsetParent !== null).length;
       const overflowByHeight = grid.scrollHeight > grid.clientHeight + 2;
       const hasHidden = visible < all.length;
+
       more.classList.toggle('hidden', !(hasHidden && !isTopicsExpanded));
       fade.classList.toggle('hidden', !(overflowByHeight && !isTopicsExpanded));
     }
@@ -779,19 +652,27 @@
     }
 
     /* ========= Game Flow ========= */
+    function fixRtlArrows(s){
+      if(!s) return s;
+      // אם יש עברית ושימוש ב־→, נהפוך ל־← כדי לקרוא RTL תקין
+      if(hasHebrew(s) && s.includes('→')) return s.replace(/→/g,'←');
+      return s;
+    }
+    function normalizeQuestionMark(txt){
+      const q = (txt||'').trim();
+      const fixed = fixRtlArrows(q);
+      return fixed.endsWith('?') ? fixed : (fixed + '?');
+    }
+
     function startGame(){
       const prof=getActiveProfile(); playerName = prof ? prof.name : playerName;
       totalQuestions = selectedCount || 6; questionCount = totalQuestions;
       wrongAnswers = [];
-      questions = buildUniqueSet(totalQuestions, selectedTopics, selectedDifficulty, selectedProgram);
+      questions = buildUniqueSet(totalQuestions, selectedTopics, selectedDifficulty);
       $('#totalQuestions').textContent=String(totalQuestions);
       $('#gamePlayerName').textContent=playerName;
       currentQuestionIndex=0; correctCount=0; selectedAnswer=null; totalTime=0;
       showScreen('gameScreen'); showQuestion(); focusTop('#questionText'); updateStatus('יצאנו לדרך - בחרו תשובה ואז אשרו');
-    }
-    function normalizeQuestionMark(txt){
-      const q = (txt||'').trim();
-      return q.endsWith('?') ? q : (q + '?');
     }
     function showQuestion(){
       if(currentQuestionIndex>=questions.length){ showResultsWithModal(); return; }
@@ -800,7 +681,7 @@
       $('#questionText').textContent = normalizeQuestionMark(q.q);
       $('#currentQuestion').textContent=currentQuestionIndex+1;
 
-      // פרוגרס מייצג שאלות שנענו
+      // בתחילת השאלה: התקדמות לפי כמה נענו
       const prog=(currentQuestionIndex/totalQuestions)*100;
       const pb=$('#progressBar');
       const p=Math.round(prog);
@@ -858,16 +739,12 @@
         });
       }
 
-      // עדכן פרוגרס לאחר המענה (כולל 100% בשאלה האחרונה)
+      // לאחר מענה — לעדכן ל־100% בשאלה האחרונה
       const answered = Math.min(currentQuestionIndex+1, totalQuestions);
       const pct = Math.round((answered/totalQuestions)*100);
       const pb=$('#progressBar'); pb.style.width=pct+'%'; pb.setAttribute('aria-valuenow',String(pct));
 
-      if(currentQuestionIndex===totalQuestions-1){ 
-        // שמירת מזהים למניעת חזרה
-        pushRecentIds(questions.map(x=>x.conceptId));
-        showResultsWithModal(); 
-      }
+      if(currentQuestionIndex===totalQuestions-1){ showResultsWithModal(); }
       else{ currentQuestionIndex++; showQuestion(); }
     });
 
@@ -897,8 +774,8 @@
 
       const topicsSummary=[...selectedTopics];
       logSessionToProfile(topicsSummary);
+      pushRecentIds(questions.map(q=>q.conceptId));
 
-      // "ללמוד מהטעויות" זמין רק אם יש טעויות
       const learnBtn = $('#learnBtn');
       learnBtn.disabled = wrongAnswers.length===0;
       learnBtn.classList.toggle('opacity-50', wrongAnswers.length===0);
@@ -923,7 +800,7 @@
     /* ========= Learn from Mistakes ========= */
     const TERM_EXPLAIN = {
       'קינטית': 'אנרגיית תנועה. כשחפץ נע, יש לו אנרגיה קינטית — ככל שהוא נע מהר או כבד יותר, האנרגיה גדולה יותר.',
-      'אמפליטודה': 'גובה הגל. בקול, אמפליטודה גבוהה פירושה קול חזק יותר (לא “צליל גבוה” יותר).',
+      'אמפליטודה': 'גובה הגל. בקול, אמפליטודה גבוהה פירושה קול חזק יותר (לא “צליל גבוה”).',
       'צפיפות': 'כמה חומר יש בנפח מסוים. אם צפיפות הספינה קטנה מזו של מים — היא צפה.'
     };
     function getSimpleExplanation(item){
@@ -935,7 +812,7 @@
       const base = item.hint ? item.hint : '';
       if(base && add.length) return base + ' ' + add.join(' ');
       if(add.length) return add.join(' ');
-      return base || 'הסבר: ננסה לתאר את העיקרון המרכזי בפשטות ובדוגמה יומיומית.';
+      return base || 'הסבר קצר: נדגיש את העיקרון הפיזיקלי המרכזי עם דוגמה פשוטה.';
     }
 
     function renderMistakes(){
@@ -999,13 +876,19 @@
       $('#kpiAvg').textContent=(avg||0)+'s';
 
       const grid=$('#byTopicGrid'); grid.innerHTML='';
-      Topics.forEach(t=>{
-        const b=prof.byTopic?.[t.key]||{sets:0,questions:0,correct:0,timeSec:0};
-        const a=b.questions?Math.round(b.correct/b.questions*100):0;
+      TopicGroups.forEach(g=>{
+        // לצורך כרטיסי פרופיל – נאחד סטטיסטיקה לפי קבוצות תצוגה
+        const statKeys = g.topics;
+        let sets=0, questions=0, correct=0;
+        statKeys.forEach(k=>{
+          const b=prof.byTopic?.[k];
+          if(b){ sets+=b.sets||0; questions+=b.questions||0; correct+=b.correct||0; }
+        });
+        const a=questions?Math.round(correct/questions*100):0;
         const card=document.createElement('div');
         card.className='p-4 rounded-2xl border-2 border-gray-200 bg-gray-50';
-        card.innerHTML=`<div class="font-extrabold mb-2">${t.emoji} ${t.label}</div>
-          <div class="text-sm text-gray-600 mb-1">סטים: <span class="ltr">${b.sets||0}</span></div>
+        card.innerHTML=`<div class="font-extrabold mb-2">${g.emoji} ${g.label}</div>
+          <div class="text-sm text-gray-600 mb-1">סטים: <span class="ltr">${sets}</span></div>
           <div class="text-sm text-gray-600 mb-1">דיוק: <span class="ltr">${a}%</span></div>
           <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden"><div style="width:${a}%" class="h-2 bg-blue-500"></div></div>`;
         grid.appendChild(card);
@@ -1022,7 +905,7 @@
           const date=new Date(item.ts).toLocaleString('he-IL',{dateStyle:'short', timeStyle:'short'});
           row.innerHTML=`<div>
               <div class="text-sm text-gray-500">${date}</div>
-              <div class="text-gray-800">${item.topics.map(k=> Topics.find(t=>t.key===k)?.label || k).join(' - ')}</div>
+              <div class="text-gray-800">${item.topics.map(k=> TopicGroups.find(g=>g.key===k)?.label || k).join(' - ')}</div>
               <div class="text-sm text-gray-500">רמה: ${item.diff} - שאלות: ${item.count}</div>
             </div>
             <div class="text-right">
@@ -1066,7 +949,7 @@
       $('#topicsNext')?.addEventListener('click',()=> showProgram());
       $('#programNext')?.addEventListener('click',()=> showSettings());
 
-      // settings: count & difficulty (אין ברירת מחדל)
+      // settings: count & difficulty (ברירת מחדל — ריק)
       $('#countChips')?.addEventListener('click', e=>{
         const chip = e.target.closest('.chip'); if(!chip) return;
         $$('#countChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
@@ -1151,7 +1034,6 @@
       showScreen('settingsScreen');
       selectedCount = null; selectedDifficulty = null;
 
-      // נקה בחירות קיימות
       $$('#countChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
       $$('#difficultyChips .chip').forEach(c=>{ c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
 
